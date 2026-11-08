@@ -5,7 +5,16 @@ import { loadAttempts, type SavedAttempt } from "@/lib/progress";
 
 export function DashboardProgress() {
   const [attempts, setAttempts] = useState<SavedAttempt[]>([]);
-  useEffect(() => { setAttempts(loadAttempts()); }, []);
+  useEffect(() => {
+    // Read browser storage after hydration and refresh when another tab updates it.
+    const refresh = () => setAttempts(loadAttempts());
+    const initialRefresh = window.setTimeout(refresh, 0);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.clearTimeout(initialRefresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
   const best = attempts.length ? Math.max(...attempts.map((a) => a.score.percent)) : 0;
   const latest = attempts[0];
   return <div className="progress-grid">
