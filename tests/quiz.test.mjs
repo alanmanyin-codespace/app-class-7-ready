@@ -50,3 +50,15 @@ test("starter bank contains 10 valid, unique, source-linked original questions",
   assert.match(q.sourceCheckedAt,/^\d{4}-\d{2}-\d{2}$/);
  }
 });
+
+test("intro-08 describes eight demerit points as an allowance BEFORE suspension, not suspension at eight", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const q = starterQuestions.find((item) => item.id === "intro-08");
+ assert.ok(q, "intro-08 must exist");
+ assert.equal(q.answerId, "c");
+ assert.equal(q.options.find((option) => option.id === q.answerId)?.text, "8");
+ assert.match(q.prompt, /allowed before licence suspension/i);
+ assert.match(q.explanation, /eight demerit points before suspension/i);
+ assert.doesNotMatch(q.explanation, /suspend(?:ed|s|ing)? at (?:exactly )?eight/i);
+ assert.equal(q.sourceUrl, "https://www.alberta.ca/class-7-learners-licence");
+});
