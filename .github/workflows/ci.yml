@@ -14,17 +14,6 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-      - run: npm install --no-audit --no-fund
-      - name: Emit npm generated lockfile for bootstrap synchronization
-        run: |
-          node - <<'NODE'
-          const lock = require("./package-lock.json");
-          console.log("RR7_ANALYTICS_LOCK_ENTRY_START");
-          console.log(JSON.stringify(lock.packages["node_modules/@vercel/analytics"]));
-          console.log("RR7_ANALYTICS_LOCK_ENTRY_END");
-          console.log("RR7_LOCK_ROOT_DEP_START");
-          console.log(JSON.stringify(lock.packages[""].dependencies));
-          console.log("RR7_LOCK_ROOT_DEP_END");
-          NODE
+      - run: npm ci --no-audit --no-fund
       - run: npm run check
       - run: npm run build
