@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { validateQuestionBank, sampleQuestions, scoreQuiz, passedOfficialStyleMock } from "../src/lib/quiz.ts";
+import { validateQuestionBank, validateVersionedQuestionBank, QUESTION_SCHEMA_VERSION, sampleQuestions, scoreQuiz, passedOfficialStyleMock } from "../src/lib/quiz.ts";
 
 const make = (id) => ({ id, prompt:`Prompt ${id}`, options:[{id:"a",text:"Correct"},{id:"b",text:"Wrong"}], answerId:"a", explanation:"Explains the answer", topic:"Test basics", sourceUrl:"https://www.alberta.ca/drivers-knowledge-test", sourceCheckedAt:"2026-11-08" });
 const bank = Array.from({length:35},(_,i)=>make(`id-${i}`));
@@ -88,4 +88,21 @@ test("intro-05/06/07 preserve source-backed supervisor, alcohol and occupant rul
  for(const question of [supervisor, alcohol, occupants]) {
    assert.equal(question.sourceUrl, "https://www.alberta.ca/class-7-learners-licence");
  }
+});
+
+
+test("versioned starter bank loads safely and preserves practice data", async () => {
+ const { questionBank, starterQuestions } = await import("../src/data/questions.ts");
+ assert.equal(questionBank.schemaVersion, QUESTION_SCHEMA_VERSION);
+ assert.equal(questionBank.questions, starterQuestions);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.equal(starterQuestions.length, 10);
+});
+
+test("versioned bank fails closed for malformed envelopes and question data", () => {
+ assert.match(validateVersionedQuestionBank(null).join(" "), /object/i);
+ assert.match(validateVersionedQuestionBank({schemaVersion: 999, questions: bank}).join(" "), /schemaVersion/);
+ assert.match(validateVersionedQuestionBank({schemaVersion: QUESTION_SCHEMA_VERSION, questions: null}).join(" "), /array/);
+ assert.match(validateVersionedQuestionBank({schemaVersion: QUESTION_SCHEMA_VERSION, questions: [make("duplicate"), make("duplicate")]}).join(" "), /Duplicate/);
+ assert.match(validateVersionedQuestionBank({schemaVersion: QUESTION_SCHEMA_VERSION, questions: [{...make("broken"), answerId: "missing"}]}).join(" "), /Invalid options\/answer/);
 });
