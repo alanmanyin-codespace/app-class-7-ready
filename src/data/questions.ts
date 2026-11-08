@@ -1,4 +1,4 @@
-import { QUESTION_SCHEMA_VERSION, validateVersionedQuestionBank } from "../lib/quiz";
+import { QUESTION_SCHEMA_VERSION, validateVersionedQuestionBank } from "../lib/quiz.ts";
 import type { Question, VersionedQuestionBank } from "../lib/quiz";
 
 // Original introductory questions written for this app, based on current Alberta government guidance.
