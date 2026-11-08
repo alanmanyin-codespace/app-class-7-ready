@@ -1,4 +1,5 @@
-import type { Question } from "../lib/quiz";
+import { QUESTION_SCHEMA_VERSION, validateVersionedQuestionBank } from "../lib/quiz";
+import type { Question, VersionedQuestionBank } from "../lib/quiz";
 
 // Original introductory questions written for this app, based on current Alberta government guidance.
 // NOT official exam questions. A full, balanced 66+ question bank still requires review.
@@ -8,7 +9,7 @@ const LEARNER = "https://www.alberta.ca/class-7-learners-licence";
 const STEPS = "https://www.alberta.ca/get-drivers-licence-steps";
 const checked = "2026-11-08";
 
-export const starterQuestions: readonly Question[] = [
+const questions: readonly Question[] = [
   { id:"intro-01", topic:"Test basics", prompt:"How many multiple-choice questions are on Alberta's driver's knowledge test?", options:[{id:"a",text:"20"},{id:"b",text:"25"},{id:"c",text:"30"},{id:"d",text:"40"}], answerId:"c", explanation:"The Alberta knowledge test contains 30 multiple-choice questions.", sourceUrl:KNOWLEDGE, sourceCheckedAt:checked },
   { id:"intro-02", topic:"Test basics", prompt:"How many correct answers are required to pass the 30-question knowledge test?", options:[{id:"a",text:"20"},{id:"b",text:"23"},{id:"c",text:"25"},{id:"d",text:"30"}], answerId:"c", explanation:"You need at least 25 correct answers out of 30 to pass.", sourceUrl:KNOWLEDGE, sourceCheckedAt:checked },
   { id:"intro-03", topic:"Eligibility", prompt:"What is the minimum age to apply for an Alberta Class 7 learner's licence?", options:[{id:"a",text:"12"},{id:"b",text:"14"},{id:"c",text:"16"},{id:"d",text:"18"}], answerId:"b", explanation:"The minimum age for a Class 7 learner's licence is 14.", sourceUrl:STEPS, sourceCheckedAt:checked },
@@ -20,3 +21,15 @@ export const starterQuestions: readonly Question[] = [
   { id:"intro-09", topic:"Test basics", prompt:"Where are Alberta driver's knowledge tests taken?", options:[{id:"a",text:"At a registry agent office"},{id:"b",text:"Only through a smartphone app"},{id:"c",text:"At a driving school without a registry"},{id:"d",text:"Only at home online"}], answerId:"a", explanation:"Knowledge tests are available at Alberta registry agent offices.", sourceUrl:KNOWLEDGE, sourceCheckedAt:checked },
   { id:"intro-10", topic:"Test basics", prompt:"How frequently may you attempt Alberta's driver's knowledge test?", options:[{id:"a",text:"Any number of times in one day"},{id:"b",text:"Once per day"},{id:"c",text:"Once per month"},{id:"d",text:"Once per year"}], answerId:"b", explanation:"Alberta allows one knowledge-test attempt per day, with a fee for each attempt.", sourceUrl:KNOWLEDGE, sourceCheckedAt:checked },
 ];
+
+// Versioned envelope is the sole source of question data. Validate at module load so
+// malformed bundled content cannot silently reach the practice UI.
+export const questionBank: VersionedQuestionBank = {
+  schemaVersion: QUESTION_SCHEMA_VERSION,
+  questions,
+};
+const validationErrors = validateVersionedQuestionBank(questionBank);
+if (validationErrors.length > 0) {
+  throw new Error(`Invalid bundled question bank: ${validationErrors.join("; ")}`);
+}
+export const starterQuestions = questionBank.questions;
