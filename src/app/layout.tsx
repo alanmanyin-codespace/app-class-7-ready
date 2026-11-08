@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,5 +17,5 @@ function Brand() {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return <html lang="en"><body><div className="site-shell"><header className="site-header"><div className="page-width header-inner"><Brand /><nav aria-label="Main navigation" className="nav-links"><Link href="/">Home</Link><Link href="/practice">Practice</Link><Link href="/signs">Road signs</Link><Link href="/about">About</Link></nav><Link href="/practice" className="header-cta">Start practising <span aria-hidden="true">↗</span></Link></div></header><main>{children}</main><footer className="site-footer"><div className="page-width footer-inner"><div><Brand /><p>Drive prepared. Learn at your own pace.</p></div><div className="footer-note">Independent study tool · Not affiliated with the Government of Alberta.<br/><Link href="/about">About this project</Link></div></div></footer></div></body></html>;
+  return <html lang="en"><body><div className="site-shell"><header className="site-header"><div className="page-width header-inner"><Brand /><nav aria-label="Main navigation" className="nav-links"><Link href="/">Home</Link><Link href="/practice">Practice</Link><Link href="/signs">Road signs</Link><Link href="/about">About</Link></nav><Link href="/practice" className="header-cta">Start practising <span aria-hidden="true">↗</span></Link></div></header><main>{children}</main><footer className="site-footer"><div className="page-width footer-inner"><div><Brand /><p>Drive prepared. Learn at your own pace.</p></div><div className="footer-note">Independent study tool · Not affiliated with the Government of Alberta.<br/><Link href="/about">About this project</Link></div></div></footer></div><Analytics /></body></html>;
 }
