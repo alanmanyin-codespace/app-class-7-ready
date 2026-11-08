@@ -13,6 +13,7 @@
     "check": "npm run test && npm run lint && npm run typecheck"
   },
   "dependencies": {
+    "@vercel/analytics": "2.0.1",
     "next": "16.4.5",
     "react": "19.2.0",
     "react-dom": "19.2.0"
@@ -27,5 +28,7 @@
     "tailwindcss": "^4.1.0",
     "typescript": "^5.8.0"
   },
-  "engines": { "node": ">=22.0.0" }
+  "engines": {
+    "node": ">=22.0.0"
+  }
 }
