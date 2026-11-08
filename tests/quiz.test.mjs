@@ -62,3 +62,30 @@ test("intro-08 describes eight demerit points as an allowance BEFORE suspension,
  assert.doesNotMatch(q.explanation, /suspend(?:ed|s|ing)? at (?:exactly )?eight/i);
  assert.equal(q.sourceUrl, "https://www.alberta.ca/class-7-learners-licence");
 });
+
+test("intro-05/06/07 preserve source-backed supervisor, alcohol and occupant rules", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const find = (id) => {
+   const item = starterQuestions.find((q) => q.id === id);
+   assert.ok(item, `Missing ${id}`);
+   return item;
+ };
+ const supervisor = find("intro-05");
+ assert.equal(supervisor.answerId, "b");
+ const supervisorAnswer = supervisor.options.find((o) => o.id === supervisor.answerId)?.text ?? "";
+ assert.match(supervisorAnswer, /over 18/i);
+ assert.match(supervisorAnswer, /full Class 5 licence or higher/i);
+ assert.match(supervisorAnswer, /front passenger seat/i);
+ const alcohol = find("intro-06");
+ assert.equal(alcohol.answerId, "a");
+ assert.match(alcohol.prompt, /must a learner maintain/i);
+ assert.match(alcohol.explanation, /zero \(0%\) alcohol/i);
+ const occupants = find("intro-07");
+ assert.equal(occupants.answerId, "b");
+ assert.match(occupants.prompt, /including the driver/i);
+ assert.match(occupants.explanation, /including the driver/i);
+ assert.match(occupants.options.find((o) => o.id === occupants.answerId)?.text ?? "", /available seat belts/i);
+ for(const question of [supervisor, alcohol, occupants]) {
+   assert.equal(question.sourceUrl, "https://www.alberta.ca/class-7-learners-licence");
+ }
+});
