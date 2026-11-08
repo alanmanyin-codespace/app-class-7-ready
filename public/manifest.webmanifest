@@ -1,0 +1,11 @@
+{
+  "name": "RoadReady 7 — Alberta Learner Practice",
+  "short_name": "RoadReady 7",
+  "description": "Unofficial Alberta Class 7 study companion",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#12324b",
+  "icons": [{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}

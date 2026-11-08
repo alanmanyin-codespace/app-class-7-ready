@@ -1,0 +1,20 @@
+name: quality-checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      # Bootstrap intentionally ships without a lockfile until a connected install can generate one.
+      # Once package-lock.json is committed, replace npm install with npm ci and enable caching.
+      - run: npm install --no-audit --no-fund
+      - run: npm run check
+      - run: npm run build
