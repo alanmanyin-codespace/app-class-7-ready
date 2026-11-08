@@ -16,5 +16,13 @@ jobs:
       # Bootstrap intentionally ships without a lockfile until a connected install can generate one.
       # Once package-lock.json is committed, replace npm install with npm ci and enable caching.
       - run: npm install --no-audit --no-fund
+      # Make the exact dependency resolution downloadable for review and a follow-up lockfile commit.
+      # Do not auto-commit from CI or grant write permissions to PR workflows.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm-package-lock
+          path: package-lock.json
+          if-no-files-found: error
+          retention-days: 7
       - run: npm run check
       - run: npm run build
