@@ -1,5 +1,7 @@
 export type Topic = "Test basics" | "Eligibility" | "Learner restrictions";
 
+export const QUESTION_SCHEMA_VERSION = 1 as const;
+
 export type Question = {
   id: string;
   prompt: string;
@@ -9,7 +11,21 @@ export type Question = {
   topic: Topic;
   sourceUrl: string;
   sourceCheckedAt: string;
+  imageAlt?: string;
 };
+
+export type VersionedQuestionBank = {
+  schemaVersion: typeof QUESTION_SCHEMA_VERSION;
+  questions: readonly Question[];
+};
+
+export function validateVersionedQuestionBank(value: unknown): string[] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return ["Question bank must be an object"];
+  const bank = value as Record<string, unknown>;
+  if (bank.schemaVersion !== QUESTION_SCHEMA_VERSION) return ["Unsupported question bank schemaVersion"];
+  if (!Array.isArray(bank.questions)) return ["Question bank questions must be an array"];
+  return validateQuestionBank(bank.questions as readonly Question[]);
+}
 
 export type AnswerMap = Record<string, string>;
 
@@ -23,13 +39,51 @@ export type QuizScore = {
 
 export function validateQuestionBank(questions: readonly Question[]): string[] {
   const errors: string[] = [];
+  if (!Array.isArray(questions)) return ["Questions must be an array"];
   const ids = new Set<string>();
-  for (const q of questions) {
-    if (!q.id.trim() || ids.has(q.id)) errors.push(`Duplicate or blank id: ${q.id}`);
-    ids.add(q.id);
-    const options = new Set(q.options.map((o) => o.id));
-    if (!q.prompt.trim() || !q.explanation.trim() || !q.sourceUrl.trim()) errors.push(`Incomplete question: ${q.id}`);
-    if (q.options.length < 2 || options.size !== q.options.length || !options.has(q.answerId)) errors.push(`Invalid options/answer: ${q.id}`);
+  const allowedTopics = new Set<Topic>(["Test basics", "Eligibility", "Learner restrictions"]);
+  const isText = (value: unknown): value is string => typeof value === "string" && value.trim().length > 0;
+  for (const [index, candidate] of questions.entries()) {
+    if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
+      errors.push(`Invalid question object at index ${index}`);
+      continue;
+    }
+    const q = candidate as Question;
+    const id = isText(q.id) ? q.id : `index-${index}`;
+    if (!isText(q.id) || ids.has(q.id)) errors.push(`Duplicate or blank id: ${id}`);
+    if (isText(q.id)) ids.add(q.id);
+    if (!isText(q.prompt) || !isText(q.explanation)) errors.push(`Incomplete question: ${id}`);
+    if (!allowedTopics.has(q.topic)) errors.push(`Invalid topic: ${id}`);
+    if (q.imageAlt !== undefined && !isText(q.imageAlt)) errors.push(`Invalid imageAlt: ${id}`);
+    if (!isText(q.sourceUrl)) {
+      errors.push(`Missing sourceUrl: ${id}`);
+    } else {
+      try {
+        const url = new URL(q.sourceUrl);
+        if (url.protocol !== "https:" || !url.hostname || url.username || url.password) errors.push(`Invalid sourceUrl: ${id}`);
+      } catch {
+        errors.push(`Invalid sourceUrl: ${id}`);
+      }
+    }
+    if (!isText(q.sourceCheckedAt) || !/^\d{4}-\d{2}-\d{2}$/.test(q.sourceCheckedAt) ||
+        !Number.isFinite(Date.parse(`${q.sourceCheckedAt}T00:00:00Z`)) ||
+        new Date(`${q.sourceCheckedAt}T00:00:00Z`).toISOString().slice(0, 10) !== q.sourceCheckedAt) {
+      errors.push(`Invalid sourceCheckedAt: ${id}`);
+    }
+    if (!Array.isArray(q.options) || q.options.length < 2) {
+      errors.push(`Invalid options/answer: ${id}`);
+      continue;
+    }
+    const optionIds = new Set<string>();
+    for (const option of q.options) {
+      if (!option || typeof option !== "object" || !isText(option.id) || !isText(option.text)) {
+        errors.push(`Invalid option content: ${id}`);
+        continue;
+      }
+      if (optionIds.has(option.id)) errors.push(`Duplicate option id: ${id}`);
+      optionIds.add(option.id);
+    }
+    if (!isText(q.answerId) || !optionIds.has(q.answerId)) errors.push(`Invalid options/answer: ${id}`);
   }
   return errors;
 }
