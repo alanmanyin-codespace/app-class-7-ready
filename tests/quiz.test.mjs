@@ -374,3 +374,11 @@ test("intersection, pedestrian and roundabout answer keys retain their intended 
     assert.equal(q.sourceUrl, sourceUrl);
   }
 });
+
+
+test("each quiz answer radio group announces the current question and provides option values", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /<legend className="sr-only">Question \{index \+ 1\} of \{selected\.length\}: \{current\.prompt\}\. Select one answer\.<\/legend>/);
+ assert.match(source, /name=\{\x60question-\$\{current\.id\}\x60\} value=\{opt\.id\}/);
+});
