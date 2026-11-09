@@ -42,7 +42,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
 
 test("expanded bank contains 30 valid, unique, source-linked original questions", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
- assert.equal(starterQuestions.length, 30);
+ assert.equal(starterQuestions.length, 38);
  assert.deepEqual(validateQuestionBank(starterQuestions), []);
  assert.equal(new Set(starterQuestions.map(q=>q.id)).size,30);
  for(const q of starterQuestions) {
@@ -96,7 +96,7 @@ test("versioned starter bank loads safely and preserves practice data", async ()
  assert.equal(questionBank.schemaVersion, QUESTION_SCHEMA_VERSION);
  assert.equal(questionBank.questions, starterQuestions);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
- assert.equal(starterQuestions.length, 30);
+ assert.equal(starterQuestions.length, 38);
 });
 
 test("versioned bank fails closed for malformed envelopes and question data", () => {
@@ -130,7 +130,7 @@ test("intersection, pedestrian and roundabout batch contains 12 unique, provenan
     ...Array.from({length:3}, (_, i) => `roundabout-${String(i+1).padStart(2,"0")}`),
   ];
   const additions = starterQuestions.filter(q => ids.includes(q.id));
-  assert.equal(questionBank.questions.length, 30);
+  assert.equal(questionBank.questions.length, 38);
   assert.equal(additions.length, 12);
   assert.equal(new Set(additions.map(q => q.id)).size, 12);
   assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
@@ -151,14 +151,14 @@ test("intersection, pedestrian and roundabout batch contains 12 unique, provenan
   }
 });
 
-test("new bank can draw 10/20/30 unique questions and fails closed for 31", async () => {
+test("new bank can draw 10/20/30 unique questions and fails closed for 39", async () => {
   const { starterQuestions } = await import("../src/data/questions.ts");
   for(const size of [10,20,30]){
     const drawn = sampleQuestions(starterQuestions,size,()=>0.4);
     assert.equal(drawn.length,size);
     assert.equal(new Set(drawn.map(q=>q.id)).size,size);
   }
-  assert.throws(()=>sampleQuestions(starterQuestions,31),RangeError);
+  assert.throws(()=>sampleQuestions(starterQuestions,39),RangeError);
 });
 
 test("30-question mock scores 24, 25 and 30 correctly, including skipped and invalid answers", () => {
@@ -185,4 +185,14 @@ test("mock exam UI offers a real 30-question option, explicit submission and pas
  assert.match(source,/Submit mock exam/);
  assert.match(source,/passedOfficialStyleMock\(score\)/);
  assert.match(source,/mode !== 30 && !answers\[current.id\]/);
+});
+
+
+test("eight original sign questions have valid answers and government guide provenance", async () => {
+ const {starterQuestions,questionBank}=await import("../src/data/questions.ts");
+ const signs=starterQuestions.filter(q=>q.id.startsWith("sign-"));
+ assert.equal(signs.length,8);
+ assert.deepEqual(signs.map(q=>q.id),Array.from({length:8},(_,i)=>`sign-${String(i+1).padStart(2,"0")}`));
+ assert.deepEqual(validateVersionedQuestionBank(questionBank),[]);
+ for(const q of signs){assert.equal(q.topic,"Road signs");assert.equal(q.sourceUrl,"https://open.alberta.ca/dataset/387f4e8a-6c0a-456a-ab31-995aadaf1f2b/resource/1edf5165-9c51-4da8-8206-7bf08bb9a76d/download/tran-drivers-guide-2023-04.pdf");assert.equal(q.sourceCheckedAt,"2026-11-08");assert.equal(q.options.length,4);assert.equal(q.options.filter(o=>o.id===q.answerId).length,1);}
 });

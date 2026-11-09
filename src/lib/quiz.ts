@@ -1,4 +1,4 @@
-export type Topic = "Test basics" | "Eligibility" | "Learner restrictions" | "School and playground zones" | "Intersections and right of way" | "Pedestrian safety" | "Roundabouts";
+export type Topic = "Test basics" | "Eligibility" | "Learner restrictions" | "School and playground zones" | "Intersections and right of way" | "Pedestrian safety" | "Roundabouts" | "Road signs";
 
 export const QUESTION_SCHEMA_VERSION = 1 as const;
 
@@ -41,7 +41,7 @@ export function validateQuestionBank(questions: readonly Question[]): string[] {
   const errors: string[] = [];
   if (!Array.isArray(questions)) return ["Questions must be an array"];
   const ids = new Set<string>();
-  const allowedTopics = new Set<Topic>(["Test basics", "Eligibility", "Learner restrictions", "School and playground zones", "Intersections and right of way", "Pedestrian safety", "Roundabouts"]);
+  const allowedTopics = new Set<Topic>(["Test basics", "Eligibility", "Learner restrictions", "School and playground zones", "Intersections and right of way", "Pedestrian safety", "Roundabouts", "Road signs"]);
   const isText = (value: unknown): value is string => typeof value === "string" && value.trim().length > 0;
   for (const [index, candidate] of questions.entries()) {
     if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
