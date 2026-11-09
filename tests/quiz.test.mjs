@@ -40,7 +40,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 60; // Raise toward 66 as verified content batches land.
+const MINIMUM_QUESTION_COUNT = 66; // Raise toward 66 as verified content batches land.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -414,4 +414,28 @@ test("incomplete mock submission asks for confirmation before scoring", async ()
  assert.match(source, /mode === 30 && answeredCount < selected\.length && !window\.confirm/);
  assert.match(source, /Unanswered questions count as incorrect/);
  assert.match(source, /\) return;\s*const result = scoreQuiz\(selected, answers\)/);
+});
+
+test("six roadside worker safety questions have verified Alberta provenance and safe answer keys", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ const expected = [
+  ["roadside-01", "b", /move into the farther lane/i],
+  ["roadside-02", "c", /60 km\/h or less/i],
+  ["roadside-03", "a", /50 km\/h/i],
+  ["roadside-04", "d", /obey the flag person's directions/i],
+  ["roadside-05", "b", /stay focused on driving/i],
+  ["roadside-06", "c", /including stopped roadside vehicles in construction zones/i],
+ ];
+ assert.equal(starterQuestions.length, 66);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.equal(new Set(starterQuestions.map(q => q.id)).size, 66);
+ for (const [id, answerId, meaning] of expected) {
+  const q = starterQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.topic, "Roadside worker safety");
+  assert.equal(q.answerId, answerId);
+  assert.match(q.options.find(o => o.id === q.answerId)?.text ?? "", meaning);
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/roadside-worker-safety");
+  assert.equal(q.sourceCheckedAt, "2026-11-09");
+ }
 });
