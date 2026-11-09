@@ -40,11 +40,13 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-test("expanded bank contains 38 valid, unique, source-linked original questions", async () => {
+const MINIMUM_QUESTION_COUNT = 38; // Raise toward 66 as verified content batches land.
+
+test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
- assert.equal(starterQuestions.length, 38);
+ assert.ok(starterQuestions.length >= MINIMUM_QUESTION_COUNT, `Expected at least ${MINIMUM_QUESTION_COUNT} questions, got ${starterQuestions.length}`);
  assert.deepEqual(validateQuestionBank(starterQuestions), []);
- assert.equal(new Set(starterQuestions.map(q=>q.id)).size,38);
+ assert.equal(new Set(starterQuestions.map(q=>q.id)).size,starterQuestions.length);
  for(const q of starterQuestions) {
   assert.ok(/^https:\/\/(?:www|open)\.alberta\.ca\//.test(q.sourceUrl), `Unexpected source domain for ${q.id}`);
   assert.match(q.sourceCheckedAt,/^\d{4}-\d{2}-\d{2}$/);
@@ -130,7 +132,7 @@ test("intersection, pedestrian and roundabout batch contains 12 unique, provenan
     ...Array.from({length:3}, (_, i) => `roundabout-${String(i+1).padStart(2,"0")}`),
   ];
   const additions = starterQuestions.filter(q => ids.includes(q.id));
-  assert.equal(questionBank.questions.length, 38);
+  assert.ok(questionBank.questions.length >= MINIMUM_QUESTION_COUNT);
   assert.equal(additions.length, 12);
   assert.equal(new Set(additions.map(q => q.id)).size, 12);
   assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
@@ -151,14 +153,14 @@ test("intersection, pedestrian and roundabout batch contains 12 unique, provenan
   }
 });
 
-test("new bank can draw 10/20/30 unique questions and fails closed for 39", async () => {
+test("validated bank can draw 10/20/30 unique questions and rejects overdraw", async () => {
   const { starterQuestions } = await import("../src/data/questions.ts");
   for(const size of [10,20,30]){
     const drawn = sampleQuestions(starterQuestions,size,()=>0.4);
     assert.equal(drawn.length,size);
     assert.equal(new Set(drawn.map(q=>q.id)).size,size);
   }
-  assert.throws(()=>sampleQuestions(starterQuestions,39),RangeError);
+  assert.throws(()=>sampleQuestions(starterQuestions,starterQuestions.length+1),RangeError);
 });
 
 test("30-question mock scores 24, 25 and 30 correctly, including skipped and invalid answers", () => {
