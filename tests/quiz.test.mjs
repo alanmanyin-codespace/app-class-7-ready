@@ -324,3 +324,27 @@ test("mock exam offers accessible review of unanswered questions before submissi
  assert.match(source, /mode === 30 && answeredCount < selected\.length && <button/);
  assert.match(source, /onClick=\{reviewUnanswered\}>Review unanswered/);
 });
+
+
+test("school and playground zone answer keys retain their intended safe meanings", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const expected = new Map([
+  ["zones-01", ["b", /30 km\/h/i]],
+  ["zones-02", ["b", /8:45 a\.m\./i]],
+  ["zones-03", ["a", /restriction is in effect/i]],
+  ["zones-04", ["a", /school area calling for caution/i]],
+  ["zones-05", ["b", /8:30 a\.m\./i]],
+  ["zones-06", ["c", /passing or attempting to pass is prohibited/i]],
+  ["zones-07", ["a", /higher maximum-speed sign/i]],
+  ["zones-08", ["b", /beneath the school sign/i]],
+ ]);
+ const zoneQuestions = starterQuestions.filter(q => q.id.startsWith("zones-"));
+ assert.equal(zoneQuestions.length, expected.size);
+ for (const [id, [answerId, meaning]] of expected) {
+  const q = zoneQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.answerId, answerId, `Answer key changed for ${id}`);
+  assert.match(q.options.find(option => option.id === q.answerId)?.text ?? "", meaning, `Answer meaning changed for ${id}`);
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/school-and-playground-zones");
+ }
+});
