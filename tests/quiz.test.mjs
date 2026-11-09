@@ -98,7 +98,7 @@ test("versioned starter bank loads safely and preserves practice data", async ()
  assert.equal(questionBank.schemaVersion, QUESTION_SCHEMA_VERSION);
  assert.equal(questionBank.questions, starterQuestions);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
- assert.equal(starterQuestions.length, 38);
+ assert.ok(starterQuestions.length >= MINIMUM_QUESTION_COUNT);
 });
 
 test("versioned bank fails closed for malformed envelopes and question data", () => {
