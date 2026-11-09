@@ -40,7 +40,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 54; // Raise toward 66 as verified content batches land.
+const MINIMUM_QUESTION_COUNT = 60; // Raise toward 66 as verified content batches land.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -381,4 +381,28 @@ test("each quiz answer radio group announces the current question and provides o
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /<legend className="sr-only">Question \{index \+ 1\} of \{selected\.length\}: \{current\.prompt\}\. Select one answer\.<\/legend>/);
  assert.match(source, /name=\{\x60question-\$\{current\.id\}\x60\} value=\{opt\.id\}/);
+});
+
+
+test("six new pedestrian-safety scenarios have verified provenance and safe answer meanings", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const expected = [
+  ["pedestrian-02","a",/stop and yield until/i],
+  ["pedestrian-03","c",/unmarked crosswalk and yield/i],
+  ["pedestrian-04","b",/allow enough time/i],
+  ["pedestrian-05","d",/especially alert/i],
+  ["pedestrian-06","a",/intention to cross/i],
+  ["pedestrian-07","b",/yield to vehicles outside a crosswalk/i],
+ ];
+ assert.ok(starterQuestions.length >= 60);
+ for (const [id, answerId, meaning] of expected) {
+  const q = starterQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.topic, "Pedestrian safety");
+  assert.equal(q.answerId, answerId);
+  assert.match(q.options.find(o => o.id === q.answerId)?.text ?? "", meaning);
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/pedestrian-safety");
+  assert.equal(q.sourceCheckedAt, "2026-11-09");
+ }
+ assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
 });
