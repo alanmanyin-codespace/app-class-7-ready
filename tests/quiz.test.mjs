@@ -313,3 +313,14 @@ test("eight distracted-driving questions have source provenance and semantically
   assert.equal(new Set(draw.map(q => q.id)).size, count);
  }
 });
+
+
+test("mock exam offers accessible review of unanswered questions before submission", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /function reviewUnanswered\(\)/);
+ assert.match(source, /selected\.findIndex\(\(question\) => !question\.options\.some/);
+ assert.match(source, /if \(firstUnanswered !== -1\) setIndex\(firstUnanswered\)/);
+ assert.match(source, /mode === 30 && answeredCount < selected\.length && <button/);
+ assert.match(source, /onClick=\{reviewUnanswered\}>Review unanswered/);
+});
