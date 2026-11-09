@@ -40,13 +40,13 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-test("expanded bank contains 30 valid, unique, source-linked original questions", async () => {
+test("expanded bank contains 38 valid, unique, source-linked original questions", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
  assert.equal(starterQuestions.length, 38);
  assert.deepEqual(validateQuestionBank(starterQuestions), []);
- assert.equal(new Set(starterQuestions.map(q=>q.id)).size,30);
+ assert.equal(new Set(starterQuestions.map(q=>q.id)).size,38);
  for(const q of starterQuestions) {
-  assert.ok(q.sourceUrl.startsWith("https://www.alberta.ca/"));
+  assert.ok(/^https:\/\/(?:www|open)\.alberta\.ca\//.test(q.sourceUrl), `Unexpected source domain for ${q.id}`);
   assert.match(q.sourceCheckedAt,/^\d{4}-\d{2}-\d{2}$/);
  }
 });
