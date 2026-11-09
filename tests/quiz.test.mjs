@@ -40,9 +40,9 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-test("expanded bank contains 18 valid, unique, source-linked original questions", async () => {
+test("expanded bank contains 30 valid, unique, source-linked original questions", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
- assert.equal(starterQuestions.length, 18);
+ assert.equal(starterQuestions.length, 30);
  assert.deepEqual(validateQuestionBank(starterQuestions), []);
  assert.equal(new Set(starterQuestions.map(q=>q.id)).size,18);
  for(const q of starterQuestions) {
@@ -96,7 +96,7 @@ test("versioned starter bank loads safely and preserves practice data", async ()
  assert.equal(questionBank.schemaVersion, QUESTION_SCHEMA_VERSION);
  assert.equal(questionBank.questions, starterQuestions);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
- assert.equal(starterQuestions.length, 18);
+ assert.equal(starterQuestions.length, 30);
 });
 
 test("versioned bank fails closed for malformed envelopes and question data", () => {
@@ -120,4 +120,43 @@ test("school and playground zone batch retains source, unique IDs, and valid ans
   assert.equal(q.sourceCheckedAt, "2026-11-08");
   assert.equal(q.options.filter((o) => o.id === q.answerId).length, 1);
  }
+});
+
+test("intersection, pedestrian and roundabout batch contains 12 unique, provenance-linked questions", async () => {
+  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+  const ids = [
+    ...Array.from({length:8}, (_, i) => `junction-${String(i+1).padStart(2,"0")}`),
+    "pedestrian-01",
+    ...Array.from({length:3}, (_, i) => `roundabout-${String(i+1).padStart(2,"0")}`),
+  ];
+  const additions = starterQuestions.filter(q => ids.includes(q.id));
+  assert.equal(questionBank.questions.length, 30);
+  assert.equal(additions.length, 12);
+  assert.equal(new Set(additions.map(q => q.id)).size, 12);
+  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+  assert.deepEqual(validateQuestionBank(additions), []);
+  const sources = new Map([
+    ["junction-", ["Intersections and right of way", "https://www.alberta.ca/intersection-rules"]],
+    ["pedestrian-", ["Pedestrian safety", "https://www.alberta.ca/pedestrian-safety"]],
+    ["roundabout-", ["Roundabouts", "https://www.alberta.ca/roundabouts"]],
+  ]);
+  for (const q of additions) {
+    const expected = [...sources].find(([prefix])=>q.id.startsWith(prefix))?.[1];
+    assert.ok(expected, `Unexpected id: ${q.id}`);
+    assert.equal(q.topic, expected[0]);
+    assert.equal(q.sourceUrl, expected[1]);
+    assert.equal(q.sourceCheckedAt, "2026-11-08");
+    assert.equal(q.options.length, 4);
+    assert.equal(q.options.filter(o=>o.id===q.answerId).length, 1);
+  }
+});
+
+test("new bank can draw 10/20/30 unique questions and fails closed for 31", async () => {
+  const { starterQuestions } = await import("../src/data/questions.ts");
+  for(const size of [10,20,30]){
+    const drawn = sampleQuestions(starterQuestions,size,()=>0.4);
+    assert.equal(drawn.length,size);
+    assert.equal(new Set(drawn.map(q=>q.id)).size,size);
+  }
+  assert.throws(()=>sampleQuestions(starterQuestions,31),RangeError);
 });
