@@ -40,11 +40,11 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-test("starter bank contains 10 valid, unique, source-linked original questions", async () => {
+test("expanded bank contains 18 valid, unique, source-linked original questions", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
- assert.equal(starterQuestions.length, 10);
+ assert.equal(starterQuestions.length, 18);
  assert.deepEqual(validateQuestionBank(starterQuestions), []);
- assert.equal(new Set(starterQuestions.map(q=>q.id)).size,10);
+ assert.equal(new Set(starterQuestions.map(q=>q.id)).size,18);
  for(const q of starterQuestions) {
   assert.ok(q.sourceUrl.startsWith("https://www.alberta.ca/"));
   assert.match(q.sourceCheckedAt,/^\d{4}-\d{2}-\d{2}$/);
@@ -96,7 +96,7 @@ test("versioned starter bank loads safely and preserves practice data", async ()
  assert.equal(questionBank.schemaVersion, QUESTION_SCHEMA_VERSION);
  assert.equal(questionBank.questions, starterQuestions);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
- assert.equal(starterQuestions.length, 10);
+ assert.equal(starterQuestions.length, 18);
 });
 
 test("versioned bank fails closed for malformed envelopes and question data", () => {
@@ -105,4 +105,19 @@ test("versioned bank fails closed for malformed envelopes and question data", ()
  assert.match(validateVersionedQuestionBank({schemaVersion: QUESTION_SCHEMA_VERSION, questions: null}).join(" "), /array/);
  assert.match(validateVersionedQuestionBank({schemaVersion: QUESTION_SCHEMA_VERSION, questions: [make("duplicate"), make("duplicate")]}).join(" "), /Duplicate/);
  assert.match(validateVersionedQuestionBank({schemaVersion: QUESTION_SCHEMA_VERSION, questions: [{...make("broken"), answerId: "missing"}]}).join(" "), /Invalid options\/answer/);
+});
+
+
+test("school and playground zone batch retains source, unique IDs, and valid answers", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const zones = starterQuestions.filter((q) => q.id.startsWith("zones-"));
+ assert.equal(zones.length, 8);
+ assert.deepEqual(zones.map((q) => q.id), Array.from({length: 8}, (_, i) => `zones-${String(i + 1).padStart(2, "0")}`));
+ assert.deepEqual(validateQuestionBank(zones), []);
+ for (const q of zones) {
+  assert.equal(q.topic, "School and playground zones");
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/school-and-playground-zones");
+  assert.equal(q.sourceCheckedAt, "2026-11-08");
+  assert.equal(q.options.filter((o) => o.id === q.answerId).length, 1);
+ }
 });
