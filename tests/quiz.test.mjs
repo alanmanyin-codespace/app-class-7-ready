@@ -348,3 +348,29 @@ test("school and playground zone answer keys retain their intended safe meanings
   assert.equal(q.sourceUrl, "https://www.alberta.ca/school-and-playground-zones");
  }
 });
+
+
+test("intersection, pedestrian and roundabout answer keys retain their intended safe meanings", async () => {
+  const { starterQuestions } = await import("../src/data/questions.ts");
+  const expected = new Map([
+    ["junction-01", ["b", /stop completely, then yield/i, "https://www.alberta.ca/intersection-rules"]],
+    ["junction-02", ["b", /yield to the oncoming car and the pedestrian/i, "https://www.alberta.ca/intersection-rules"]],
+    ["junction-03", ["c", /do not enter the intersection/i, "https://www.alberta.ca/intersection-rules"]],
+    ["junction-04", ["c", /clear the intersection/i, "https://www.alberta.ca/intersection-rules"]],
+    ["junction-05", ["d", /stop sign/i, "https://www.alberta.ca/intersection-rules"]],
+    ["junction-06", ["a", /yield sign/i, "https://www.alberta.ca/intersection-rules"]],
+    ["junction-07", ["b", /indicated turn has the right of way/i, "https://www.alberta.ca/intersection-rules"]],
+    ["junction-08", ["a", /stop and yield/i, "https://www.alberta.ca/intersection-rules"]],
+    ["pedestrian-01", ["b", /stop and yield to the pedestrian/i, "https://www.alberta.ca/pedestrian-safety"]],
+    ["roundabout-01", ["c", /already circulating/i, "https://www.alberta.ca/roundabouts"]],
+    ["roundabout-02", ["d", /changing lanes within the roundabout/i, "https://www.alberta.ca/roundabouts"]],
+    ["roundabout-03", ["a", /signal a right turn/i, "https://www.alberta.ca/roundabouts"]],
+  ]);
+  for (const [id, [answerId, meaning, sourceUrl]] of expected) {
+    const q = starterQuestions.find(item => item.id === id);
+    assert.ok(q, `Missing question ${id}`);
+    assert.equal(q.answerId, answerId, `Answer key changed: ${id}`);
+    assert.match(q.options.find(option => option.id === q.answerId)?.text ?? "", meaning, `Answer meaning changed: ${id}`);
+    assert.equal(q.sourceUrl, sourceUrl);
+  }
+});
