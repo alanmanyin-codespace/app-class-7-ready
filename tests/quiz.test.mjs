@@ -248,7 +248,7 @@ test("winter driving batch contains eight original, uniquely keyed, source-backe
   assert.equal(q.options.length, 4);
   assert.equal(q.options.filter(o => o.id === q.answerId).length, 1);
  }
- assert.ok(starterQuestions.length >= 46);
+ assert.ok(starterQuestions.length >= 54);
 });
 
 
@@ -279,5 +279,37 @@ test("winter driving answer keys match the source-backed safe actions", async ()
   assert.ok(q, `Missing ${id}`);
   assert.equal(q.answerId, answerId, `Incorrect answer key: ${id}`);
   assert.match(q.options.find(option => option.id === q.answerId)?.text ?? "", answerText, `Unsafe correct option: ${id}`);
+ }
+});
+
+
+test("eight distracted-driving questions have source provenance and semantically correct answer keys", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ const questions = starterQuestions.filter(q => q.id.startsWith("distraction-"));
+ assert.equal(questions.length, 8);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ const expected = [
+  ["a", /safely parked/i],
+  ["b", /before driving/i],
+  ["c", /voicemail/i],
+  ["d", /hands-free call/i],
+  ["a", /safe place to park/i],
+  ["b", /police may charge/i],
+  ["c", /before departure/i],
+  ["d", /9-1-1/i],
+ ];
+ for (const [index, q] of questions.entries()) {
+  assert.equal(q.id, `distraction-${String(index + 1).padStart(2, "0")}`);
+  assert.equal(q.topic, "Distracted driving");
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/distracted-driving");
+  assert.equal(q.sourceCheckedAt, "2026-11-09");
+  assert.equal(q.options.length, 4);
+  assert.equal(q.answerId, expected[index][0]);
+  assert.match(q.options.find(o => o.id === q.answerId)?.text ?? "", expected[index][1]);
+ }
+ assert.ok(starterQuestions.length >= 54);
+ for (const count of [10, 20, 30]) {
+  const draw = sampleQuestions(starterQuestions, count, () => 0.42);
+  assert.equal(new Set(draw.map(q => q.id)).size, count);
  }
 });
