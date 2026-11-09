@@ -160,3 +160,29 @@ test("new bank can draw 10/20/30 unique questions and fails closed for 31", asyn
   }
   assert.throws(()=>sampleQuestions(starterQuestions,31),RangeError);
 });
+
+test("30-question mock scores 24, 25 and 30 correctly, including skipped and invalid answers", () => {
+ const qs=bank.slice(0,30);
+ const answersFor=(n)=>Object.fromEntries(qs.slice(0,n).map(q=>[q.id,"a"]));
+ for (const [correct,passes] of [[24,false],[25,true],[30,true]]) {
+  const result=scoreQuiz(qs,answersFor(correct));
+  assert.equal(result.total,30);
+  assert.equal(result.correct,correct);
+  assert.equal(result.answered,correct);
+  assert.equal(passedOfficialStyleMock(result),passes);
+ }
+ const incomplete=scoreQuiz(qs,{...answersFor(24),"id-24":"invalid"});
+ assert.equal(incomplete.answered,24);
+ assert.equal(incomplete.incorrectIds.length,6);
+ assert.equal(passedOfficialStyleMock(incomplete),false);
+});
+
+test("mock exam UI offers a real 30-question option, explicit submission and pass/fail feedback", async () => {
+ const { readFile }=await import("node:fs/promises");
+ const source=await readFile(new URL("../src/components/practice-quiz.tsx",import.meta.url),"utf8");
+ assert.match(source,/30-question mock exam \(25 correct to pass\)/);
+ assert.match(source,/sampleQuestions\(questions, count\)/);
+ assert.match(source,/Submit mock exam/);
+ assert.match(source,/passedOfficialStyleMock\(score\)/);
+ assert.match(source,/mode !== 30 && !answers\[current.id\]/);
+});
