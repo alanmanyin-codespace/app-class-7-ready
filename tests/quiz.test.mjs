@@ -234,3 +234,24 @@ test("quiz UI shows answered count and warns mock users about unanswered questio
  assert.match(source, /unanswered will count as incorrect/);
  assert.match(source, /answeredCount < selected\.length/);
 });
+
+
+test("winter driving answer keys match the source-backed safe actions", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const expected = new Map([
+  ["winter-01", ["b", /drive slower/i]],
+  ["winter-02", ["b", /headlights on/i]],
+  ["winter-03", ["b", /three times/i]],
+  ["winter-04", ["a", /more slippery/i]],
+  ["winter-05", ["a", /clear windows/i]],
+  ["winter-06", ["c", /avoid cruise control/i]],
+  ["winter-07", ["a", /avoid unnecessary/i]],
+  ["winter-08", ["a", /inspect tires/i]],
+ ]);
+ for (const [id, [answerId, answerText]] of expected) {
+  const q = starterQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.answerId, answerId, `Incorrect answer key: ${id}`);
+  assert.match(q.options.find(option => option.id === q.answerId)?.text ?? "", answerText, `Unsafe correct option: ${id}`);
+ }
+});
