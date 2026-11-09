@@ -190,6 +190,27 @@ test("mock exam UI offers a real 30-question option, explicit submission and pas
 });
 
 
+test("road sign answer keys match safe meaning, not just an existing option ID", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const expected = new Map([
+  ["sign-01", /complete stop and proceed only when safe/i],
+  ["sign-02", /yield the right of way to the pedestrians/i],
+  ["sign-03", /traffic would be moving toward you/i],
+  ["sign-04", /do not drive into that roadway opening/i],
+  ["sign-05", /a warning sign/i],
+  ["sign-06", /provide service information/i],
+  ["sign-07", /guide route and destination decisions/i],
+  ["sign-08", /follow the arrow's indicated direction/i],
+ ]);
+ for (const [id, meaning] of expected) {
+  const q = starterQuestions.find((item) => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  const selected = q.options.find((option) => option.id === q.answerId);
+  assert.ok(selected, `Invalid answer ID for ${id}`);
+  assert.match(selected.text, meaning, `Unsafe or mismatched answer for ${id}`);
+ }
+});
+
 test("eight original sign questions have valid answers and government guide provenance", async () => {
  const {starterQuestions,questionBank}=await import("../src/data/questions.ts");
  const signs=starterQuestions.filter(q=>q.id.startsWith("sign-"));
