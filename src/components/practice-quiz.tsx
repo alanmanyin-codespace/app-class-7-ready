@@ -2,7 +2,7 @@
 import { useState } from "react";
 import type { AnswerMap, Question } from "@/lib/quiz";
 import { sampleQuestions, scoreQuiz, validateQuestionBank } from "@/lib/quiz";
-import { saveAttempt } from "@/lib/progress";
+import { saveCompletedAttempt } from "@/lib/progress";
 import Link from "next/link";
 
 type Props = { questions: readonly Question[] };
@@ -28,7 +28,7 @@ export function PracticeQuiz({ questions }: Props) {
 
   function finishQuiz() {
     const result = scoreQuiz(selected, answers);
-    const saved = saveAttempt({ id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, completedAt: new Date().toISOString(), score: result });
+    const saved = saveCompletedAttempt(result);
     setStored(saved);
     setFinished(true);
   }
