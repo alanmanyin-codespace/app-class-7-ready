@@ -202,13 +202,18 @@ test("road sign answer keys match safe meaning, not just an existing option ID",
   ["sign-07", /guide route and destination decisions/i],
   ["sign-08", /follow the arrow's indicated direction/i],
  ]);
+ const expectedPositions = new Map([["sign-01","a"],["sign-02","b"],["sign-03","c"],["sign-04","d"],["sign-05","b"],["sign-06","c"],["sign-07","d"],["sign-08","b"]]);
+ const positions = new Set();
  for (const [id, meaning] of expected) {
   const q = starterQuestions.find((item) => item.id === id);
   assert.ok(q, `Missing ${id}`);
   const selected = q.options.find((option) => option.id === q.answerId);
   assert.ok(selected, `Invalid answer ID for ${id}`);
+  assert.equal(q.answerId, expectedPositions.get(id), `Unexpected answer position for ${id}`);
+  positions.add(q.answerId);
   assert.match(selected.text, meaning, `Unsafe or mismatched answer for ${id}`);
  }
+ assert.equal(positions.size, 4, "Road sign answers should cover all four option positions");
 });
 
 test("eight original sign questions have valid answers and government guide provenance", async () => {
