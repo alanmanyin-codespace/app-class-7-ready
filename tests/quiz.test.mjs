@@ -406,3 +406,12 @@ test("six new pedestrian-safety scenarios have verified provenance and safe answ
  }
  assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
 });
+
+
+test("incomplete mock submission asks for confirmation before scoring", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /mode === 30 && answeredCount < selected\.length && !window\.confirm/);
+ assert.match(source, /Unanswered questions count as incorrect/);
+ assert.match(source, /\) return;\s*const result = scoreQuiz\(selected, answers\)/);
+});
