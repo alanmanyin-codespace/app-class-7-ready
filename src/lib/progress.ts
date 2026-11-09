@@ -29,3 +29,12 @@ export function saveAttempt(attempt: SavedAttempt): boolean {
     return true;
   } catch { return false; }
 }
+
+/** Create and persist an attempt only when the learner submits a quiz. */
+export function saveCompletedAttempt(score: QuizScore): boolean {
+  return saveAttempt({
+    id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    completedAt: new Date().toISOString(),
+    score,
+  });
+}
