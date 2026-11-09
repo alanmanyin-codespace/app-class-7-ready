@@ -32,6 +32,7 @@ export function PracticeQuiz({ questions }: Props) {
     if (firstUnanswered !== -1) setIndex(firstUnanswered);
   }
   function finishQuiz() {
+    if (mode === 30 && answeredCount < selected.length && !window.confirm(`Submit with ${selected.length - answeredCount} unanswered question(s)? Unanswered questions count as incorrect.`)) return;
     const result = scoreQuiz(selected, answers);
     const saved = saveCompletedAttempt(result);
     setStored(saved);
