@@ -198,3 +198,12 @@ test("eight original sign questions have valid answers and government guide prov
  assert.deepEqual(validateVersionedQuestionBank(questionBank),[]);
  for(const q of signs){assert.equal(q.topic,"Road signs");assert.equal(q.sourceUrl,"https://open.alberta.ca/dataset/387f4e8a-6c0a-456a-ab31-995aadaf1f2b/resource/1edf5165-9c51-4da8-8206-7bf08bb9a76d/download/tran-drivers-guide-2023-04.pdf");assert.equal(q.sourceCheckedAt,"2026-11-08");assert.equal(q.options.length,4);assert.equal(q.options.filter(o=>o.id===q.answerId).length,1);}
 });
+
+
+test("results screen offers a route back to mode selection without submitting again", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /function chooseAnotherMode\(\)\s*\{[^}]*setSelected\(\[\]\)/);
+ assert.match(source, /onClick=\{chooseAnotherMode\}>Choose another mode<\/button>/);
+ assert.match(source, /function restart\(\)\s*\{\s*startQuiz\(mode\)/);
+});
