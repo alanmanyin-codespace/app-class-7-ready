@@ -44,7 +44,7 @@ test("expanded bank contains 30 valid, unique, source-linked original questions"
  const { starterQuestions } = await import("../src/data/questions.ts");
  assert.equal(starterQuestions.length, 30);
  assert.deepEqual(validateQuestionBank(starterQuestions), []);
- assert.equal(new Set(starterQuestions.map(q=>q.id)).size,18);
+ assert.equal(new Set(starterQuestions.map(q=>q.id)).size,30);
  for(const q of starterQuestions) {
   assert.ok(q.sourceUrl.startsWith("https://www.alberta.ca/"));
   assert.match(q.sourceCheckedAt,/^\d{4}-\d{2}-\d{2}$/);
