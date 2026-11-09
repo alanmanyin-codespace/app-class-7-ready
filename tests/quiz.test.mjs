@@ -224,3 +224,13 @@ test("winter driving batch contains eight original, uniquely keyed, source-backe
  }
  assert.ok(starterQuestions.length >= 46);
 });
+
+
+test("quiz UI shows answered count and warns mock users about unanswered questions", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /const answeredCount = selected\.filter/);
+ assert.match(source, /aria-live="polite"/);
+ assert.match(source, /unanswered will count as incorrect/);
+ assert.match(source, /answeredCount < selected\.length/);
+});
