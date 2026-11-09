@@ -321,7 +321,7 @@ test("mock exam offers accessible review of unanswered questions before submissi
  assert.match(source, /function reviewUnanswered\(\)/);
  assert.match(source, /selected\.findIndex\(\(question\) => !question\.options\.some/);
  assert.match(source, /if \(firstUnanswered !== -1\) setIndex\(firstUnanswered\)/);
- assert.match(source, /mode === 30 && answeredCount < selected\.length && <button/);
+ assert.match(source, /answeredCount < selected\.length && <button/);
  assert.match(source, /onClick=\{reviewUnanswered\}>Review unanswered/);
 });
 
@@ -438,4 +438,13 @@ test("six roadside worker safety questions have verified Alberta provenance and 
   assert.equal(q.sourceUrl, "https://www.alberta.ca/roadside-worker-safety");
   assert.equal(q.sourceCheckedAt, "2026-11-09");
  }
+});
+
+
+test("all practice modes can jump to unanswered questions and require valid answers before finishing", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /answeredCount < selected\.length && <button/);
+ assert.match(source, /mode !== 30 && answeredCount !== selected\.length/);
+ assert.match(source, /function reviewUnanswered\(\)/);
 });
