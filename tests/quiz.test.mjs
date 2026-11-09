@@ -207,3 +207,20 @@ test("results screen offers a route back to mode selection without submitting ag
  assert.match(source, /onClick=\{chooseAnotherMode\}>Choose another mode<\/button>/);
  assert.match(source, /function restart\(\)\s*\{\s*startQuiz\(mode\)/);
 });
+
+
+test("winter driving batch contains eight original, uniquely keyed, source-backed questions", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ const winter = starterQuestions.filter(q => q.id.startsWith("winter-"));
+ assert.equal(winter.length, 8);
+ assert.deepEqual(winter.map(q => q.id), Array.from({length:8}, (_,i) => `winter-${String(i+1).padStart(2,"0")}`));
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ for (const q of winter) {
+  assert.equal(q.topic, "Winter driving");
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
+  assert.equal(q.sourceCheckedAt, "2026-11-09");
+  assert.equal(q.options.length, 4);
+  assert.equal(q.options.filter(o => o.id === q.answerId).length, 1);
+ }
+ assert.ok(starterQuestions.length >= 46);
+});
