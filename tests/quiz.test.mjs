@@ -675,3 +675,13 @@ test("in-progress quiz can return to mode selection only after confirming loss o
  assert.match(source, /chooseAnotherMode\(\);\s*\}/);
  assert.match(source, /type="button" onClick=\{exitQuiz\}>Change mode<\/button>/);
 });
+
+
+test("results show separate correct, incorrect, and unanswered totals", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /aria-label="Answer breakdown"/);
+ assert.match(source, /score\.correct\} correct/);
+ assert.match(source, /answers\[q\.id\] && answers\[q\.id\] !== q\.answerId/);
+ assert.match(source, /!answers\[q\.id\]/);
+});
