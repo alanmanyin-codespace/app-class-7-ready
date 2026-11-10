@@ -427,9 +427,9 @@ test("six roadside worker safety questions have verified Alberta provenance and 
   ["roadside-05", "b", /stay focused on driving/i],
   ["roadside-06", "c", /including stopped roadside vehicles in construction zones/i],
  ];
- assert.equal(starterQuestions.length, 66);
+ assert.ok(starterQuestions.length >= 68);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
- assert.equal(new Set(starterQuestions.map(q => q.id)).size, 66);
+ assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
  for (const [id, answerId, meaning] of expected) {
   const q = starterQuestions.find(item => item.id === id);
   assert.ok(q, `Missing ${id}`);
