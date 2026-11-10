@@ -614,3 +614,13 @@ test("completed practice retains Next navigation alongside Finish before the las
  assert.match(source, /index===selected\.length-1 \|\| answeredCount===selected\.length/);
  assert.match(source, /disabled=\{mode !== 30 && !answers\[current\.id\]\}/);
 });
+
+
+test("mock submission is available from any question and warns before submitting blanks", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /mode === 30 \|\| index===selected\.length-1 \|\| answeredCount===selected\.length/);
+ assert.match(source, /mode === 30 && answeredCount < selected\.length && !window\.confirm/);
+ assert.match(source, /Unanswered questions count as incorrect/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
+});
