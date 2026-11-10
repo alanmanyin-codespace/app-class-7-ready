@@ -606,3 +606,11 @@ test("result review distinguishes skipped mock answers from incorrect selections
  assert.match(source, /ok \? "Correct" : answer \? "Needs review" : "Unanswered"/);
  assert.match(source, /answer\?\.text \?\? "Not answered"/);
 });
+
+test("completed practice retains Next navigation alongside Finish before the last question", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /index < selected\.length - 1 && <button[^>]*onClick=\{\(\)=>setIndex\(\(i\)=>i\+1\)\}/);
+ assert.match(source, /index===selected\.length-1 \|\| answeredCount===selected\.length/);
+ assert.match(source, /disabled=\{mode !== 30 && !answers\[current\.id\]\}/);
+});
