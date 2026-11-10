@@ -499,3 +499,12 @@ test("road sign questions retain independently checked meanings and official gui
   assert.match(q.sourceCheckedAt, /^\d{4}-\d{2}-\d{2}$/);
  }
 });
+
+
+test("quiz progress bar reflects completed answers rather than navigation position", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /aria-label="Questions answered" aria-valuemin=\{0\} aria-valuemax=\{selected\.length\} aria-valuenow=\{answeredCount\}/);
+ assert.match(source, /width:\x60\$\{\(answeredCount\/selected\.length\)\*100\}%\x60/);
+ assert.doesNotMatch(source, /aria-label="Quiz progress"/);
+});
