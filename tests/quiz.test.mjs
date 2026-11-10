@@ -662,3 +662,13 @@ test("winter following distance and cruise control additions preserve Alberta ev
   assert.equal(q.sourceCheckedAt, "2026-11-10");
  }
 });
+
+
+test("in-progress quiz can return to mode selection only after confirming loss of answers", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /function exitQuiz\(\) \{/);
+ assert.match(source, /if \(!window\.confirm\("Leave this quiz\? Your current answers will be lost\."\)\) return;/);
+ assert.match(source, /chooseAnotherMode\(\);\s*\}/);
+ assert.match(source, /type="button" onClick=\{exitQuiz\}>Change mode<\/button>/);
+});
