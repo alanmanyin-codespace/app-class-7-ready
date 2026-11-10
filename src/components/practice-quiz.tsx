@@ -33,8 +33,10 @@ export function PracticeQuiz({ questions }: Props) {
   const score = isFinished ? scoreQuiz(selected, answers) : null;
 
   function reviewUnanswered() {
-    const firstUnanswered = selected.findIndex((question) => !question.options.some((option) => option.id === answers[question.id]));
-    if (firstUnanswered !== -1) setIndex(firstUnanswered);
+    // Search forward, then wrap, so the button advances even if the current question is blank.
+    const nextUnanswered = Array.from({ length: selected.length - 1 }, (_, offset) => (index + offset + 1) % selected.length)
+      .find((candidate) => !selected[candidate].options.some((option) => option.id === answers[selected[candidate].id]));
+    if (nextUnanswered !== undefined) setIndex(nextUnanswered);
   }
   function finishQuiz() {
     if (mode === 30 && answeredCount < selected.length && !window.confirm(`Submit with ${selected.length - answeredCount} unanswered question(s)? Unanswered questions count as incorrect.`)) return;
