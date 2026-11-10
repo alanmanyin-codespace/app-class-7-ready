@@ -586,3 +586,15 @@ test("winter preparedness additions preserve independently verified answer meani
   assert.equal(q.sourceCheckedAt, "2026-11-10");
  }
 });
+
+
+test("returning from results restores focus to mode selection without initial autofocus", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /const focusModeOnReturn = useRef\(false\)/);
+ assert.match(source, /selected\.length === 0 && focusModeOnReturn\.current/);
+ assert.match(source, /modeHeadingRef\.current\?\.focus\(\)/);
+ assert.match(source, /focusModeOnReturn\.current = false/);
+ assert.match(source, /function chooseAnotherMode\(\) \{ focusModeOnReturn\.current = true; setSelected\(\[\]\)/);
+ assert.match(source, /id="practice-mode-title" ref=\{modeHeadingRef\} tabIndex=\{-1\}/);
+});
