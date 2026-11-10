@@ -53,6 +53,22 @@ test("expanded bank meets minimum count and validates every question dynamically
  }
 });
 
+test("all original questions have distinct prompts and unambiguous answer options", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const normalize = (value) => value.normalize("NFKC").toLowerCase().replace(/[^\\p{L}\\p{N}]+/gu, " ").trim();
+ const seenPrompts = new Map();
+ for (const q of starterQuestions) {
+  const prompt = normalize(q.prompt);
+  assert.ok(prompt.length >= 20, `Question ${q.id} has an unusually short prompt`);
+  assert.ok(!seenPrompts.has(prompt), `Duplicate prompt: ${q.id} and ${seenPrompts.get(prompt)}`);
+  seenPrompts.set(prompt, q.id);
+  const choices = q.options.map((option) => normalize(option.text));
+  assert.equal(new Set(choices).size, choices.length, `Duplicate answer choices in ${q.id}`);
+  assert.ok(choices.every(Boolean), `Empty answer choice in ${q.id}`);
+  assert.ok(normalize(q.explanation).length >= 20, `Missing meaningful explanation for ${q.id}`);
+ }
+});
+
 test("intro-08 describes eight demerit points as an allowance BEFORE suspension, not suspension at eight", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
  const q = starterQuestions.find((item) => item.id === "intro-08");
