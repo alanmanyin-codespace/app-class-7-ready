@@ -469,3 +469,33 @@ test("review unanswered navigation advances and wraps instead of selecting curre
  assert.equal(findNext(1), 2);
  assert.equal(findNext(3), 0);
 });
+
+
+test("road sign questions retain independently checked meanings and official guide provenance", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ // Rechecked 2026-11-09 against Alberta's current driver-guide index and traffic-sign catalogue.
+ // https://www.alberta.ca/driver-guides-overview-and-pdf-versions
+ // https://www.alberta.ca/traffic-sign-catalogue
+ const guide = "https://open.alberta.ca/dataset/387f4e8a-6c0a-456a-ab31-995aadaf1f2b/resource/1edf5165-9c51-4da8-8206-7bf08bb9a76d/download/tran-drivers-guide-2023-04.pdf";
+ const expected = new Map([
+  ["sign-01", ["a", /complete stop and proceed only when safe/i]],
+  ["sign-02", ["b", /yield the right of way to the pedestrians/i]],
+  ["sign-03", ["c", /traffic would be moving toward you/i]],
+  ["sign-04", ["d", /do not drive into that roadway opening/i]],
+  ["sign-05", ["b", /warning sign/i]],
+  ["sign-06", ["c", /provide service information/i]],
+  ["sign-07", ["d", /guide route and destination decisions/i]],
+  ["sign-08", ["b", /follow the arrow's indicated direction/i]],
+ ]);
+ const signs = starterQuestions.filter(q => q.id.startsWith("sign-"));
+ assert.equal(signs.length, expected.size);
+ for (const [id, [answerId, meaning]] of expected) {
+  const q = signs.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.topic, "Road signs");
+  assert.equal(q.answerId, answerId, `Answer key changed for ${id}`);
+  assert.match(q.options.find(o => o.id === q.answerId)?.text ?? "", meaning, `Incorrect meaning for ${id}`);
+  assert.equal(q.sourceUrl, guide, `Unexpected source for ${id}`);
+  assert.match(q.sourceCheckedAt, /^\\d{4}-\\d{2}-\\d{2}$/);
+ }
+});
