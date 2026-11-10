@@ -518,3 +518,12 @@ test("submitting a quiz focuses the results heading for keyboard and screen-read
  assert.match(source, /\[isFinished\]/);
  assert.match(source, /<h2 ref=\{resultsHeadingRef\} tabIndex=\{-1\}>You scored \{score\.correct\} out of \{score\.total\}\.<\/h2>/);
 });
+
+
+test("completed practice can finish from any question, while incomplete practice remains gated", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /index===selected\.length-1 \|\| answeredCount===selected\.length/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
+ assert.match(source, /mode !== 30 && !answers\[current\.id\]/);
+});
