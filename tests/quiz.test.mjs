@@ -496,6 +496,6 @@ test("road sign questions retain independently checked meanings and official gui
   assert.equal(q.answerId, answerId, `Answer key changed for ${id}`);
   assert.match(q.options.find(o => o.id === q.answerId)?.text ?? "", meaning, `Incorrect meaning for ${id}`);
   assert.equal(q.sourceUrl, guide, `Unexpected source for ${id}`);
-  assert.match(q.sourceCheckedAt, /^\\d{4}-\\d{2}-\\d{2}$/);
+  assert.match(q.sourceCheckedAt, /^\d{4}-\d{2}-\d{2}$/);
  }
 });
