@@ -58,7 +58,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 70; // All additions require current official source evidence.
+const MINIMUM_QUESTION_COUNT = 72; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -68,6 +68,9 @@ test("expanded bank meets minimum count and validates every question dynamically
  for(const q of starterQuestions) {
   assert.ok(/^https:\/\/(?:www|open)\.alberta\.ca\//.test(q.sourceUrl), `Unexpected source domain for ${q.id}`);
   assert.match(q.sourceCheckedAt,/^\d{4}-\d{2}-\d{2}$/);
+  const checked = new Date(`${q.sourceCheckedAt}T00:00:00Z`);
+  assert.ok(Number.isFinite(checked.getTime()) && checked.toISOString().slice(0, 10) === q.sourceCheckedAt, `Invalid source-check date for ${q.id}`);
+  assert.ok(checked.getTime() <= Date.now(), `Future source-check date for ${q.id}`);
  }
 });
 
