@@ -461,7 +461,7 @@ test("six roadside worker safety questions have verified Alberta provenance and 
   ["roadside-05", "b", /stay focused on driving/i],
   ["roadside-06", "c", /including stopped roadside vehicles in construction zones/i],
  ];
- assert.ok(starterQuestions.length >= 70);
+ assert.ok(starterQuestions.length >= 72);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
  for (const [id, answerId, meaning] of expected) {
@@ -640,4 +640,25 @@ test("mock submission is available from any question and warns before submitting
  assert.match(source, /mode === 30 && answeredCount < selected\.length && !window\.confirm/);
  assert.match(source, /Unanswered questions count as incorrect/);
  assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
+});
+
+
+test("winter following distance and cruise control additions preserve Alberta evidence", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ const expected = new Map([
+  ["winter-13", ["c", /at least three times your normal following distance/i]],
+  ["winter-14", ["b", /avoid using cruise control in winter conditions/i]],
+ ]);
+ assert.ok(starterQuestions.length >= 72);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
+ for (const [id, [answerId, meaning]] of expected) {
+  const q = starterQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.topic, "Winter driving");
+  assert.equal(q.answerId, answerId);
+  assert.match(q.options.find(option => option.id === answerId)?.text ?? "", meaning);
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
+  assert.equal(q.sourceCheckedAt, "2026-11-10");
+ }
 });
