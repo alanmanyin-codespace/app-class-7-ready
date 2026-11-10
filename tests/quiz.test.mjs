@@ -40,7 +40,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 66; // Raise toward 66 as verified content batches land.
+const MINIMUM_QUESTION_COUNT = 68; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -526,4 +526,23 @@ test("completed practice can finish from any question, while incomplete practice
  assert.match(source, /index===selected\.length-1 \|\| answeredCount===selected\.length/);
  assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
  assert.match(source, /mode !== 30 && !answers\[current\.id\]/);
+});
+
+test("winter preparedness additions preserve independently verified answer meanings", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ // Alberta Safer winter highways, checked 2026-11-10:
+ // https://www.alberta.ca/safer-winter-highways
+ const expected = new Map([
+  ["winter-09", ["a", /blanket and a flashlight/i]],
+  ["winter-10", ["b", /more than half full/i]],
+ ]);
+ for (const [id, [answerId, meaning]] of expected) {
+  const q = starterQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.topic, "Winter driving");
+  assert.equal(q.answerId, answerId);
+  assert.match(q.options.find(o => o.id === q.answerId)?.text ?? "", meaning);
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
+  assert.equal(q.sourceCheckedAt, "2026-11-10");
+ }
 });
