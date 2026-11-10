@@ -487,6 +487,12 @@ test("review unanswered navigation advances and wraps instead of selecting curre
 });
 
 
+test("review unanswered retains keyboard focus when only the current question is blank", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /if \(nextUnanswered !== undefined\) setIndex\(nextUnanswered\);\s*else questionHeadingRef\.current\?\.focus\(\)/);
+});
+
 test("road sign questions retain independently checked meanings and official guide provenance", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
  // Rechecked 2026-11-09 against Alberta's current driver-guide index and traffic-sign catalogue.
