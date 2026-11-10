@@ -58,7 +58,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 68; // All additions require current official source evidence.
+const MINIMUM_QUESTION_COUNT = 70; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -461,7 +461,7 @@ test("six roadside worker safety questions have verified Alberta provenance and 
   ["roadside-05", "b", /stay focused on driving/i],
   ["roadside-06", "c", /including stopped roadside vehicles in construction zones/i],
  ];
- assert.ok(starterQuestions.length >= 68);
+ assert.ok(starterQuestions.length >= 70);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
  for (const [id, answerId, meaning] of expected) {
@@ -587,6 +587,23 @@ test("winter preparedness additions preserve independently verified answer meani
  }
 });
 
+
+test("winter snowplow and lane-change scenarios preserve Alberta source and answers", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const expected = new Map([
+  ["winter-11", ["b", /stay back until the snowplow operator lets you pass/i]],
+  ["winter-12", ["a", /signal early, check mirrors and shoulder-check/i]],
+ ]);
+ for (const [id, [answerId, meaning]] of expected) {
+  const q = starterQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.topic, "Winter driving");
+  assert.equal(q.answerId, answerId);
+  assert.match(q.options.find(option => option.id === answerId)?.text ?? "", meaning);
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
+  assert.equal(q.sourceCheckedAt, "2026-11-10");
+ }
+});
 
 test("returning from results restores focus to mode selection without initial autofocus", async () => {
  const { readFile } = await import("node:fs/promises");
