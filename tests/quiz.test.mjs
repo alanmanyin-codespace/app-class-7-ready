@@ -19,6 +19,24 @@ test("sampleQuestions returns unique, requested-length questions without mutatin
  assert.deepEqual(bank,original);
 });
 
+test("practice and mock modes sample unique questions without changing the bank", () => {
+ const snapshot = bank.map(q => q.id);
+ for (const count of [10, 20, 30]) {
+  const first = sampleQuestions(bank, count, () => 0);
+  const second = sampleQuestions(bank, count, () => 0.999);
+  assert.equal(first.length, count);
+  assert.equal(second.length, count);
+  assert.equal(new Set(first.map(q => q.id)).size, count);
+  assert.equal(new Set(second.map(q => q.id)).size, count);
+  assert.ok(first.every(q => bank.includes(q)));
+  assert.ok(second.every(q => bank.includes(q)));
+  assert.notDeepEqual(first.map(q => q.id), second.map(q => q.id), `Mode ${count} should permit different initial selections`);
+ }
+ assert.deepEqual(bank.map(q => q.id), snapshot);
+ assert.throws(() => sampleQuestions(bank.slice(0, 19), 20), RangeError);
+ assert.throws(() => sampleQuestions(bank.slice(0, 29), 30), RangeError);
+});
+
 test("sampleQuestions rejects impossible counts and invalid random generators", () => {
  assert.throws(()=>sampleQuestions(bank,36),RangeError);
  assert.throws(()=>sampleQuestions(bank,0),RangeError);
