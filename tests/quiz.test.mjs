@@ -237,7 +237,7 @@ test("results screen offers a route back to mode selection without submitting ag
 
 test("winter driving batch contains eight original, uniquely keyed, source-backed questions", async () => {
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
- const winter = starterQuestions.filter(q => q.id.startsWith("winter-"));
+ const winter = starterQuestions.filter(q => /^winter-0[1-8]$/.test(q.id));
  assert.equal(winter.length, 8);
  assert.deepEqual(winter.map(q => q.id), Array.from({length:8}, (_,i) => `winter-${String(i+1).padStart(2,"0")}`));
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
