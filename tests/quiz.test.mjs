@@ -508,3 +508,13 @@ test("quiz progress bar reflects completed answers rather than navigation positi
  assert.match(source, /width:\x60\$\{\(answeredCount\/selected\.length\)\*100\}%\x60/);
  assert.doesNotMatch(source, /aria-label="Quiz progress"/);
 });
+
+
+test("submitting a quiz focuses the results heading for keyboard and screen-reader orientation", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /const resultsHeadingRef = useRef<HTMLHeadingElement>\(null\)/);
+ assert.match(source, /if \(isFinished\) resultsHeadingRef\.current\?\.focus\(\)/);
+ assert.match(source, /\[isFinished\]/);
+ assert.match(source, /<h2 ref=\{resultsHeadingRef\} tabIndex=\{-1\}>You scored \{score\.correct\} out of \{score\.total\}\.<\/h2>/);
+});
