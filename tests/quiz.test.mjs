@@ -448,3 +448,13 @@ test("all practice modes can jump to unanswered questions and require valid answ
  assert.match(source, /mode !== 30 && answeredCount !== selected\.length/);
  assert.match(source, /function reviewUnanswered\(\)/);
 });
+
+
+test("question changes move keyboard focus to the current heading without adding it to tab order", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /useRef<HTMLHeadingElement>\(null\)/);
+ assert.match(source, /if \(selected\.length > 0 && !isFinished\) questionHeadingRef\.current\?\.focus\(\)/);
+ assert.match(source, /\[index, selected, isFinished\]/);
+ assert.match(source, /<h2 className="quiz-question" ref=\{questionHeadingRef\} tabIndex=\{-1\}>\{current\.prompt\}<\/h2>/);
+});
