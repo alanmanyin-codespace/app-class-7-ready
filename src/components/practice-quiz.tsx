@@ -26,6 +26,14 @@ export function PracticeQuiz({ questions }: Props) {
   const answeredCount = selected.filter((question) => question.options.some((option) => option.id === answers[question.id])).length;
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
   const resultsHeadingRef = useRef<HTMLHeadingElement>(null);
+  const modeHeadingRef = useRef<HTMLHeadingElement>(null);
+  const focusModeOnReturn = useRef(false);
+  useEffect(() => {
+    if (selected.length === 0 && focusModeOnReturn.current) {
+      modeHeadingRef.current?.focus();
+      focusModeOnReturn.current = false;
+    }
+  }, [selected]);
   // Move keyboard and screen-reader focus to each newly displayed question.
   useEffect(() => {
     if (selected.length > 0 && !isFinished) questionHeadingRef.current?.focus();
@@ -52,10 +60,10 @@ export function PracticeQuiz({ questions }: Props) {
     setFinished(true);
   }
   function restart() { startQuiz(mode); }
-  function chooseAnotherMode() { setSelected([]); setIndex(0); setAnswers({}); setFinished(false); setStartError(""); }
+  function chooseAnotherMode() { focusModeOnReturn.current = true; setSelected([]); setIndex(0); setAnswers({}); setFinished(false); setStartError(""); }
 
   if (selected.length === 0) {
-    return <section className="quiz-panel" aria-labelledby="practice-mode-title"><span className="section-kicker">CHOOSE YOUR PRACTICE</span><h2 id="practice-mode-title">Choose practice or a mock exam</h2><p>Practice with 10 or 20 questions, or take a 30-question mock exam. The mock requires 25 correct answers to pass. Each session draws unique questions; answers appear only after submission.</p><fieldset className="answers-list"><legend>Session mode</legend>{([10,20,30] as const).map(count => <label className={`answer-option ${mode === count ? "selected" : ""}`} key={count}><input type="radio" name="practice-length" value={count} checked={mode === count} disabled={!bankReady || questions.length < count} onChange={() => setMode(count)}/><span>{count === 30 ? "30-question mock exam (25 correct to pass)" : `${count} questions`}</span>{(!bankReady || questions.length < count) && <span> (unavailable)</span>}</label>)}</fieldset><p role="status">{bankReady ? `${questions.length} validated questions available.` : "Question bank validation failed; practice is unavailable."}</p>{startError && <p role="alert" className="warning-note">{startError}</p>}<button className="btn btn-primary" type="button" disabled={!bankReady || questions.length < mode} onClick={() => startQuiz(mode)}>Start {mode === 30 ? "30-question mock exam" : `${mode}-question practice`} →</button></section>;
+    return <section className="quiz-panel" aria-labelledby="practice-mode-title"><span className="section-kicker">CHOOSE YOUR PRACTICE</span><h2 id="practice-mode-title" ref={modeHeadingRef} tabIndex={-1}>Choose practice or a mock exam</h2><p>Practice with 10 or 20 questions, or take a 30-question mock exam. The mock requires 25 correct answers to pass. Each session draws unique questions; answers appear only after submission.</p><fieldset className="answers-list"><legend>Session mode</legend>{([10,20,30] as const).map(count => <label className={`answer-option ${mode === count ? "selected" : ""}`} key={count}><input type="radio" name="practice-length" value={count} checked={mode === count} disabled={!bankReady || questions.length < count} onChange={() => setMode(count)}/><span>{count === 30 ? "30-question mock exam (25 correct to pass)" : `${count} questions`}</span>{(!bankReady || questions.length < count) && <span> (unavailable)</span>}</label>)}</fieldset><p role="status">{bankReady ? `${questions.length} validated questions available.` : "Question bank validation failed; practice is unavailable."}</p>{startError && <p role="alert" className="warning-note">{startError}</p>}<button className="btn btn-primary" type="button" disabled={!bankReady || questions.length < mode} onClick={() => startQuiz(mode)}>Start {mode === 30 ? "30-question mock exam" : `${mode}-question practice`} →</button></section>;
   }
   if (isFinished && score) {
     return <article className="quiz-panel result-panel"><div className="result-mark" aria-hidden="true">✓</div><span className="section-kicker">{mode === 30 ? "MOCK EXAM COMPLETE" : "PRACTICE COMPLETE"}</span><h2 ref={resultsHeadingRef} tabIndex={-1}>You scored {score.correct} out of {score.total}.</h2><p className="result-large">{score.percent}%</p>{mode === 30 && <p role="status"><strong>{passedOfficialStyleMock(score) ? "PASS" : "NOT PASSED"} — {score.correct}/30 correct; 25 required to pass.</strong></p>}<p>{score.correct === score.total ? "Excellent work! You answered every question correctly." : "Nice progress. Review the explanations below to strengthen your understanding."}</p>{!stored && <p role="status" className="warning-note">This browser could not save your result. Your current results are still shown below.</p>}
