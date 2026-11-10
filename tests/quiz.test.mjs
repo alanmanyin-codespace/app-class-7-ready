@@ -55,7 +55,7 @@ test("expanded bank meets minimum count and validates every question dynamically
 
 test("all original questions have distinct prompts and unambiguous answer options", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
- const normalize = (value) => value.normalize("NFKC").toLowerCase().replace(/[^\\p{L}\\p{N}]+/gu, " ").trim();
+ const normalize = (value) => value.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
  const seenPrompts = new Map();
  for (const q of starterQuestions) {
   const prompt = normalize(q.prompt);
