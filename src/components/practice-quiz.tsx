@@ -42,6 +42,7 @@ export function PracticeQuiz({ questions }: Props) {
     const nextUnanswered = Array.from({ length: selected.length - 1 }, (_, offset) => (index + offset + 1) % selected.length)
       .find((candidate) => !selected[candidate].options.some((option) => option.id === answers[selected[candidate].id]));
     if (nextUnanswered !== undefined) setIndex(nextUnanswered);
+    else questionHeadingRef.current?.focus(); // Only the current question is unanswered; keep keyboard focus useful.
   }
   function finishQuiz() {
     if (mode === 30 && answeredCount < selected.length && !window.confirm(`Submit with ${selected.length - answeredCount} unanswered question(s)? Unanswered questions count as incorrect.`)) return;
