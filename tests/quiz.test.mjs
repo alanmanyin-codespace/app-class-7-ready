@@ -319,8 +319,9 @@ test("mock exam offers accessible review of unanswered questions before submissi
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /function reviewUnanswered\(\)/);
- assert.match(source, /selected\.findIndex\(\(question\) => !question\.options\.some/);
- assert.match(source, /if \(firstUnanswered !== -1\) setIndex\(firstUnanswered\)/);
+ assert.match(source, /Array\.from\(\{ length: selected\.length - 1 \}/);
+ assert.match(source, /\(index \+ offset \+ 1\) % selected\.length/);
+ assert.match(source, /if \(nextUnanswered !== undefined\) setIndex\(nextUnanswered\)/);
  assert.match(source, /answeredCount < selected\.length && <button/);
  assert.match(source, /onClick=\{reviewUnanswered\}>Review unanswered/);
 });
@@ -457,4 +458,14 @@ test("question changes move keyboard focus to the current heading without adding
  assert.match(source, /if \(selected\.length > 0 && !isFinished\) questionHeadingRef\.current\?\.focus\(\)/);
  assert.match(source, /\[index, selected, isFinished\]/);
  assert.match(source, /<h2 className="quiz-question" ref=\{questionHeadingRef\} tabIndex=\{-1\}>\{current\.prompt\}<\/h2>/);
+});
+
+// The navigation skips the current blank question and wraps around the session.
+test("review unanswered navigation advances and wraps instead of selecting current blank", () => {
+ const unanswered = [true, false, true, false];
+ const findNext = (current) => Array.from({length: unanswered.length - 1}, (_, offset) => (current + offset + 1) % unanswered.length).find(i => unanswered[i]);
+ assert.equal(findNext(0), 2);
+ assert.equal(findNext(2), 0);
+ assert.equal(findNext(1), 2);
+ assert.equal(findNext(3), 0);
 });
