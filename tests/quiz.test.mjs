@@ -733,3 +733,14 @@ test("answer review displays each question source verification date", async () =
  assert.match(source, /Source last checked: <time dateTime=\{q\.sourceCheckedAt\}>\{q\.sourceCheckedAt\}<\/time>/);
  assert.match(source, /href=\{q\.sourceUrl\} target="_blank" rel="noopener noreferrer"/);
 });
+
+
+test("results breakdown derives incorrect and unanswered from validated scoring", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /score\.answered - score\.correct/);
+ assert.match(source, /score\.total - score\.answered/);
+ const questions = bank.slice(0, 3);
+ const score = scoreQuiz(questions, { "id-0": "a", "id-1": "invalid" });
+ assert.deepEqual([score.correct, score.answered - score.correct, score.total - score.answered], [1, 0, 2]);
+});
