@@ -649,8 +649,8 @@ test("mock submission is available from any question and warns before submitting
 test("winter following distance and icy-bend guidance preserve Alberta evidence", async () => {
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
  const expected = new Map([
-  ["winter-13", ["c", /at least three times your normal following distance/i], "2026-11-10"],
-  ["winter-14", ["b", /slow to a safe speed before the bend and avoid braking on the curve/i], "2026-11-11"],
+  ["winter-13", [["c", /at least three times your normal following distance/i], "2026-11-10"]],
+  ["winter-14", [["b", /slow to a safe speed before the bend and avoid braking on the curve/i], "2026-11-11"]],
  ]);
  assert.ok(starterQuestions.length >= 72);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
