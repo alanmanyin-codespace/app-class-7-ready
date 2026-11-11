@@ -655,7 +655,7 @@ test("winter following distance and icy-bend guidance preserve Alberta evidence"
  assert.ok(starterQuestions.length >= 72);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
- for (const [id, [answerId, meaning], checkedAt] of expected) {
+ for (const [id, [answerId, meaning, checkedAt]] of expected) {
   const q = starterQuestions.find(item => item.id === id);
   assert.ok(q, `Missing ${id}`);
   assert.equal(q.topic, "Winter driving");
