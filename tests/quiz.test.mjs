@@ -732,6 +732,7 @@ test("answer review displays each question source verification date", async () =
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /Source last checked: <time dateTime=\{q\.sourceCheckedAt\}>\{q\.sourceCheckedAt\}<\/time>/);
  assert.match(source, /href=\{q\.sourceUrl\} target="_blank" rel="noopener noreferrer"/);
+ assert.match(source, /aria-label=\{`View Alberta government source for question \$\{i \+ 1\} \(opens in a new tab\)`\}/);
 });
 
 
