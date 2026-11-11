@@ -281,7 +281,7 @@ test("winter driving batch contains eight original, uniquely keyed, source-backe
  for (const q of winter) {
   assert.equal(q.topic, "Winter driving");
   assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
-  assert.equal(q.sourceCheckedAt, "2026-11-09");
+  assert.equal(q.sourceCheckedAt, q.id === "winter-03" ? "2026-11-11" : "2026-11-09");
   assert.equal(q.options.length, 4);
   assert.equal(q.options.filter(o => o.id === q.answerId).length, 1);
  }
