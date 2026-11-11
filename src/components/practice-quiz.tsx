@@ -60,7 +60,7 @@ export function PracticeQuiz({ questions }: Props) {
     setFinished(true);
   }
   function exitQuiz() {
-    if (!window.confirm("Leave this quiz? Your current answers will be lost.")) return;
+    if (answeredCount > 0 && !window.confirm("Leave this quiz? Your current answers will be lost.")) return;
     chooseAnotherMode();
   }
   function restart() { startQuiz(mode); }
