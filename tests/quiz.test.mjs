@@ -725,3 +725,11 @@ test("winter bridge icing and headlight visibility questions retain Alberta prov
   assert.equal(q.sourceCheckedAt, "2026-11-10");
  }
 });
+
+
+test("answer review displays each question source verification date", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /Source last checked: <time dateTime=\{q\.sourceCheckedAt\}>\{q\.sourceCheckedAt\}<\/time>/);
+ assert.match(source, /href=\{q\.sourceUrl\} target="_blank" rel="noopener noreferrer"/);
+});
