@@ -281,7 +281,7 @@ test("winter driving batch contains eight original, uniquely keyed, source-backe
  for (const q of winter) {
   assert.equal(q.topic, "Winter driving");
   assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
-  assert.equal(q.sourceCheckedAt, q.id === "winter-03" ? "2026-11-11" : "2026-11-09");
+  assert.equal(q.sourceCheckedAt, ["winter-03", "winter-04"].includes(q.id) ? "2026-11-11" : "2026-11-09");
   assert.equal(q.options.length, 4);
   assert.equal(q.options.filter(o => o.id === q.answerId).length, 1);
  }
@@ -305,7 +305,7 @@ test("winter driving answer keys match the source-backed safe actions", async ()
   ["winter-01", ["b", /drive slower/i]],
   ["winter-02", ["b", /headlights on/i]],
   ["winter-03", ["b", /better traction/i]],
-  ["winter-04", ["a", /more slippery/i]],
+  ["winter-04", ["a", /outside the previous tire tracks/i]],
   ["winter-05", ["a", /clear windows/i]],
   ["winter-06", ["c", /avoid cruise control/i]],
   ["winter-07", ["a", /avoid unnecessary/i]],
