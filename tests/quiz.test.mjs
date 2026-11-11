@@ -706,14 +706,14 @@ test("30-question mock scoring reconciles correct, wrong and unanswered answers"
 });
 
 
-test("winter bridge icing and snowplow safety questions retain Alberta provenance", async () => {
+test("winter bridge icing and downhill gearing questions retain Alberta provenance", async () => {
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
  assert.ok(starterQuestions.length >= 74);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
  const expected = new Map([
   ["winter-15", ["a", /bridge deck/i]],
-  ["winter-16", ["b", /stay back until the snowplow lets you pass/i]],
+  ["winter-16", ["c", /select a lower gear smoothly to help control downhill speed/i]],
  ]);
  for (const [id, [answerId, meaning]] of expected) {
   const q = starterQuestions.find(item => item.id === id);
