@@ -749,7 +749,8 @@ test("results breakdown derives incorrect and unanswered from validated scoring"
 test("practice and mock learners can clear a selected answer while practice completion stays gated", async () => {
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
- assert.match(source, /mode === 30 && answers\[current\.id\]/);
+ assert.match(source, /\{answers\[current\.id\] && <button/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
  assert.match(source, /Clear answer \(leave unanswered\)/);
  assert.match(source, /delete next\[current\.id\]/);
  assert.match(source, /setAnswers\(prev => \{ const next = \{ \.\.\.prev \}; delete next\[current\.id\]; return next; \}\)/);
