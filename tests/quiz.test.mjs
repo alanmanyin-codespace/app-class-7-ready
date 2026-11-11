@@ -746,7 +746,7 @@ test("results breakdown derives incorrect and unanswered from validated scoring"
 });
 
 
-test("mock learners can clear a selected answer without affecting practice gating", async () => {
+test("practice and mock learners can clear a selected answer while practice completion stays gated", async () => {
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /mode === 30 && answers\[current\.id\]/);
