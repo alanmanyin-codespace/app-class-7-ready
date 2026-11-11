@@ -722,7 +722,7 @@ test("winter bridge icing and snowplow safety questions retain Alberta provenanc
   assert.equal(q.answerId, answerId);
   assert.match(q.options.find(o => o.id === answerId)?.text ?? "", meaning);
   assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
-  assert.equal(q.sourceCheckedAt, "2026-11-10");
+  assert.equal(q.sourceCheckedAt, id === "winter-16" ? "2026-11-11" : "2026-11-10");
  }
 });
 
