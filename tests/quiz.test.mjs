@@ -704,3 +704,24 @@ test("30-question mock scoring reconciles correct, wrong and unanswered answers"
  assert.equal(result.incorrectIds.length, incorrect + unanswered);
  assert.equal(passedOfficialStyleMock(result), false);
 });
+
+
+test("winter bridge icing and headlight visibility questions retain Alberta provenance", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ assert.ok(starterQuestions.length >= 74);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
+ const expected = new Map([
+  ["winter-15", ["a", /bridge deck/i]],
+  ["winter-16", ["c", /headlights so the taillights are illuminated/i]],
+ ]);
+ for (const [id, [answerId, meaning]] of expected) {
+  const q = starterQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.topic, "Winter driving");
+  assert.equal(q.answerId, answerId);
+  assert.match(q.options.find(o => o.id === answerId)?.text ?? "", meaning);
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
+  assert.equal(q.sourceCheckedAt, "2026-11-10");
+ }
+});
