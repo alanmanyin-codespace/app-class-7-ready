@@ -685,3 +685,22 @@ test("results show separate correct, incorrect, and unanswered totals", async ()
  assert.match(source, /answers\[q\.id\] && answers\[q\.id\] !== q\.answerId/);
  assert.match(source, /!answers\[q\.id\]/);
 });
+
+
+test("30-question mock scoring reconciles correct, wrong and unanswered answers", () => {
+ const questions = bank.slice(0, 30);
+ const answers = Object.fromEntries([
+  ...questions.slice(0, 24).map(q => [q.id, "a"]),
+  ...questions.slice(24, 27).map(q => [q.id, "b"]),
+ ]);
+ const result = scoreQuiz(questions, answers);
+ const correct = questions.filter(q => answers[q.id] === q.answerId).length;
+ const incorrect = questions.filter(q => answers[q.id] && answers[q.id] !== q.answerId).length;
+ const unanswered = questions.filter(q => !answers[q.id]).length;
+ assert.deepEqual({ correct, incorrect, unanswered }, { correct: 24, incorrect: 3, unanswered: 3 });
+ assert.equal(correct + incorrect + unanswered, result.total);
+ assert.equal(result.correct, correct);
+ assert.equal(result.answered, correct + incorrect);
+ assert.equal(result.incorrectIds.length, incorrect + unanswered);
+ assert.equal(passedOfficialStyleMock(result), false);
+});
