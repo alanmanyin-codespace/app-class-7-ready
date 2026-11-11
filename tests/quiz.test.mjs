@@ -667,11 +667,11 @@ test("winter following distance and cruise control additions preserve Alberta ev
 });
 
 
-test("in-progress quiz can return to mode selection only after confirming loss of answers", async () => {
+test("mode exit warns only after answers exist, preserving a safe no-answer exit", async () => {
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /function exitQuiz\(\) \{/);
- assert.match(source, /if \(!window\.confirm\("Leave this quiz\? Your current answers will be lost\."\)\) return;/);
+ assert.match(source, /if \(answeredCount > 0 && !window\.confirm\("Leave this quiz\? Your current answers will be lost\."\)\) return;/);
  assert.match(source, /chooseAnotherMode\(\);\s*\}/);
  assert.match(source, /type="button" onClick=\{exitQuiz\}>Change mode<\/button>/);
 });
