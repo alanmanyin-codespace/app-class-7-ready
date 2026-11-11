@@ -682,8 +682,8 @@ test("results show separate correct, incorrect, and unanswered totals", async ()
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /aria-label="Answer breakdown"/);
  assert.match(source, /score\.correct\} correct/);
- assert.match(source, /answers\[q\.id\] && answers\[q\.id\] !== q\.answerId/);
- assert.match(source, /!answers\[q\.id\]/);
+ assert.match(source, /score\.answered - score\.correct\} incorrect/);
+ assert.match(source, /score\.total - score\.answered\} unanswered/);
 });
 
 
