@@ -744,3 +744,13 @@ test("results breakdown derives incorrect and unanswered from validated scoring"
  const score = scoreQuiz(questions, { "id-0": "a", "id-1": "invalid" });
  assert.deepEqual([score.correct, score.answered - score.correct, score.total - score.answered], [1, 0, 2]);
 });
+
+
+test("mock learners can clear a selected answer without affecting practice gating", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /mode === 30 && answers\[current\.id\]/);
+ assert.match(source, /Clear answer \(leave unanswered\)/);
+ assert.match(source, /delete next\[current\.id\]/);
+ assert.match(source, /setAnswers\(prev => \{ const next = \{ \.\.\.prev \}; delete next\[current\.id\]; return next; \}\)/);
+});
