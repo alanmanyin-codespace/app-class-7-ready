@@ -623,7 +623,7 @@ test("returning from results restores focus to mode selection without initial au
 test("result review distinguishes skipped mock answers from incorrect selections", async () => {
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
- assert.match(source, /ok \? "Correct" : answer \? "Needs review" : "Unanswered"/);
+ assert.match(source, /ok \? "Correct" : answer \? "Incorrect" : "Unanswered"/);
  assert.match(source, /answer\?\.text \?\? "Not answered"/);
 });
 
