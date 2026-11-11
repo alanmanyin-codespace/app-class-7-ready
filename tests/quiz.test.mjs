@@ -304,7 +304,7 @@ test("winter driving answer keys match the source-backed safe actions", async ()
  const expected = new Map([
   ["winter-01", ["b", /drive slower/i]],
   ["winter-02", ["b", /headlights on/i]],
-  ["winter-03", ["b", /three times/i]],
+  ["winter-03", ["b", /better traction/i]],
   ["winter-04", ["a", /more slippery/i]],
   ["winter-05", ["a", /clear windows/i]],
   ["winter-06", ["c", /avoid cruise control/i]],
