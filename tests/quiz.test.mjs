@@ -58,7 +58,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 72; // All additions require current official source evidence.
+const MINIMUM_QUESTION_COUNT = 74; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
