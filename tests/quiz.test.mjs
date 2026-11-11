@@ -650,7 +650,7 @@ test("winter following distance and cruise control additions preserve Alberta ev
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
  const expected = new Map([
   ["winter-13", ["c", /at least three times your normal following distance/i]],
-  ["winter-14", ["b", /avoid using cruise control in winter conditions/i]],
+  ["winter-14", ["b", /slow to a safe speed before the bend and avoid braking on the curve/i]],
  ]);
  assert.ok(starterQuestions.length >= 72);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
