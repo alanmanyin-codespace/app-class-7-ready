@@ -646,23 +646,23 @@ test("mock submission is available from any question and warns before submitting
 });
 
 
-test("winter following distance and cruise control additions preserve Alberta evidence", async () => {
+test("winter following distance and icy-bend guidance preserve Alberta evidence", async () => {
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
  const expected = new Map([
-  ["winter-13", ["c", /at least three times your normal following distance/i]],
-  ["winter-14", ["b", /slow to a safe speed before the bend and avoid braking on the curve/i]],
+  ["winter-13", ["c", /at least three times your normal following distance/i], "2026-11-10"],
+  ["winter-14", ["b", /slow to a safe speed before the bend and avoid braking on the curve/i], "2026-11-11"],
  ]);
  assert.ok(starterQuestions.length >= 72);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
- for (const [id, [answerId, meaning]] of expected) {
+ for (const [id, [answerId, meaning], checkedAt] of expected) {
   const q = starterQuestions.find(item => item.id === id);
   assert.ok(q, `Missing ${id}`);
   assert.equal(q.topic, "Winter driving");
   assert.equal(q.answerId, answerId);
   assert.match(q.options.find(option => option.id === answerId)?.text ?? "", meaning);
   assert.equal(q.sourceUrl, "https://www.alberta.ca/safer-winter-highways");
-  assert.equal(q.sourceCheckedAt, "2026-11-10");
+  assert.equal(q.sourceCheckedAt, checkedAt);
  }
 });
 
