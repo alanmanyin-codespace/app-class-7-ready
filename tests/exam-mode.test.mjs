@@ -4,15 +4,16 @@ import { readFile } from "node:fs/promises";
 
 const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
 
-test("exam mode: 'Show answers as I go' is on by default and offered as a switch", () => {
+test("practice feedback defaults on, while mock mode disables the switch", () => {
   assert.match(source, /const \[instantFeedback, setInstantFeedback\] = useState\(true\)/);
-  assert.match(source, /type="checkbox" role="switch" checked=\{instantFeedback\}/);
+  assert.match(source, /type="checkbox" role="switch" checked=\{mode === 30 \? false : instantFeedback\} disabled=\{mode === 30\}/);
   assert.match(source, /Show answers as I go/);
 });
 
 test("exam mode: checking an answer reveals feedback and locks the choice", () => {
-  assert.match(source, /const needsCheck = !!current && instantFeedback && !!answers\[current\.id\] && !checked\[current\.id\]/);
-  assert.match(source, /const locked = !!current && instantFeedback && !!checked\[current\.id\]/);
+  assert.match(source, /function checkAnswer\(\) \{ if \(mode === 30 \|\| !current \|\| !answers\[current\.id\]\) return;/);
+  assert.match(source, /const needsCheck = !!current && mode !== 30 && instantFeedback && !!answers\[current\.id\] && !checked\[current\.id\]/);
+  assert.match(source, /const locked = !!current && mode !== 30 && instantFeedback && !!checked\[current\.id\]/);
   assert.match(source, /onClick=\{checkAnswer\}>Check answer<\/button>/);
   assert.match(source, /disabled=\{locked\}/);
   assert.match(source, /\{locked && <div className=\{`answer-feedback/);
@@ -21,7 +22,7 @@ test("exam mode: checking an answer reveals feedback and locks the choice", () =
 test("exam mode: without instant feedback nothing is revealed before submission", () => {
   // Feedback, verdicts and locked styling all depend on `locked`, which requires instantFeedback.
   assert.doesNotMatch(source, /\{checked\[current\.id\] && <div className=\{`answer-feedback/);
-  assert.match(source, /if \(instantFeedback && checked\[q\.id\]\) return answers\[q\.id\] === q\.answerId \? "correct" : "incorrect"/);
+  assert.match(source, /if \(mode !== 30 && instantFeedback && checked\[q\.id\]\) return answers\[q\.id\] === q\.answerId \? "correct" : "incorrect"/);
 });
 
 test("exam mode: question map jumps, marks the current question and flags", () => {
