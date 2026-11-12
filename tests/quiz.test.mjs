@@ -764,3 +764,11 @@ test("failed mock exam uses a failure mark rather than a success checkmark", asy
   assert.match(source, /mode === 30 && !passedOfficialStyleMock\(score\) \? "×" : "✓"/);
   assert.match(source, /\{passedOfficialStyleMock\(score\) \? "PASS" : "NOT PASSED"\}/);
 });
+
+
+test("failed mock result gives threshold-specific recovery guidance", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /mode === 30 && !passedOfficialStyleMock\(score\) \? "You have not reached the mock exam pass threshold yet\./);
+ assert.match(source, /Review missed and unanswered questions below, then try another mock\./);
+});
