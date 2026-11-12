@@ -92,7 +92,7 @@ export function PracticeQuiz({ questions }: Props) {
   const needsCheck = !!current && mode !== 30 && instantFeedback && !!answers[current.id] && !checked[current.id];
 
   function goTo(target: number) { setResumed(false); setIndex(target); }
-  function checkAnswer() { if (!current || !answers[current.id]) return; focusFeedback.current = true; setResumed(false); setChecked((prev) => ({ ...prev, [current.id]: true })); }
+  function checkAnswer() { if (mode === 30 || !current || !answers[current.id]) return; focusFeedback.current = true; setResumed(false); setChecked((prev) => ({ ...prev, [current.id]: true })); }
   function toggleFlag() { if (!current) return; setFlagged((prev) => { const next = { ...prev }; if (next[current.id]) delete next[current.id]; else next[current.id] = true; return next; }); }
   function reviewUnanswered() {
     // Search forward, then wrap, so the button advances even if the current question is blank.
