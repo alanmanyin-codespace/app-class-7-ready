@@ -58,7 +58,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 74; // All additions require current official source evidence.
+const MINIMUM_QUESTION_COUNT = 75; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -150,13 +150,13 @@ test("versioned bank fails closed for malformed envelopes and question data", ()
 test("school and playground zone batch retains source, unique IDs, and valid answers", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
  const zones = starterQuestions.filter((q) => q.id.startsWith("zones-"));
- assert.equal(zones.length, 8);
- assert.deepEqual(zones.map((q) => q.id), Array.from({length: 8}, (_, i) => `zones-${String(i + 1).padStart(2, "0")}`));
+ assert.equal(zones.length, 9);
+ assert.deepEqual(zones.map((q) => q.id), Array.from({length: 9}, (_, i) => `zones-${String(i + 1).padStart(2, "0")}`));
  assert.deepEqual(validateQuestionBank(zones), []);
  for (const q of zones) {
   assert.equal(q.topic, "School and playground zones");
   assert.equal(q.sourceUrl, "https://www.alberta.ca/school-and-playground-zones");
-  assert.equal(q.sourceCheckedAt, "2026-11-08");
+  assert.equal(q.sourceCheckedAt, q.id === "zones-09" ? "2026-11-12" : "2026-11-08");
   assert.equal(q.options.filter((o) => o.id === q.answerId).length, 1);
  }
 });
@@ -375,6 +375,7 @@ test("school and playground zone answer keys retain their intended safe meanings
   ["zones-06", ["c", /passing or attempting to pass is prohibited/i]],
   ["zones-07", ["a", /higher maximum-speed sign/i]],
   ["zones-08", ["b", /beneath the school sign/i]],
+  ["zones-09", ["b", /playground area/i]],
  ]);
  const zoneQuestions = starterQuestions.filter(q => q.id.startsWith("zones-"));
  assert.equal(zoneQuestions.length, expected.size);
@@ -708,7 +709,7 @@ test("30-question mock scoring reconciles correct, wrong and unanswered answers"
 
 test("winter bridge icing and downhill gearing questions retain Alberta provenance", async () => {
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
- assert.ok(starterQuestions.length >= 74);
+ assert.ok(starterQuestions.length >= 75);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
  const expected = new Map([
