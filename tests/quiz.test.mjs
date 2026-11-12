@@ -759,6 +759,7 @@ test("practice and mock learners can clear a selected answer while practice comp
 
 
 test("failed mock exam uses a failure mark rather than a success checkmark", async () => {
+  const { readFile } = await import("node:fs/promises");
   const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
   assert.match(source, /mode === 30 && !passedOfficialStyleMock\(score\) \? "×" : "✓"/);
   assert.match(source, /\{passedOfficialStyleMock\(score\) \? "PASS" : "NOT PASSED"\}/);
