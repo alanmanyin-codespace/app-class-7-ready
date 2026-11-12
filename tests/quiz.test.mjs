@@ -150,13 +150,13 @@ test("versioned bank fails closed for malformed envelopes and question data", ()
 test("school and playground zone batch retains source, unique IDs, and valid answers", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
  const zones = starterQuestions.filter((q) => q.id.startsWith("zones-"));
- assert.equal(zones.length, 8);
- assert.deepEqual(zones.map((q) => q.id), Array.from({length: 8}, (_, i) => `zones-${String(i + 1).padStart(2, "0")}`));
+ assert.equal(zones.length, 9);
+ assert.deepEqual(zones.map((q) => q.id), Array.from({length: 9}, (_, i) => `zones-${String(i + 1).padStart(2, "0")}`));
  assert.deepEqual(validateQuestionBank(zones), []);
  for (const q of zones) {
   assert.equal(q.topic, "School and playground zones");
   assert.equal(q.sourceUrl, "https://www.alberta.ca/school-and-playground-zones");
-  assert.equal(q.sourceCheckedAt, "2026-11-08");
+  assert.equal(q.sourceCheckedAt, q.id === "zones-09" ? "2026-11-12" : "2026-11-08");
   assert.equal(q.options.filter((o) => o.id === q.answerId).length, 1);
  }
 });
