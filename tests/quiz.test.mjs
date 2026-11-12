@@ -58,7 +58,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 74; // All additions require current official source evidence.
+const MINIMUM_QUESTION_COUNT = 75; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -782,4 +782,18 @@ test("results review offers accessible missed-only filtering with an empty-succe
  assert.match(source, /reviewMissedOnly && answers\[q\.id\] === q\.answerId/);
  assert.match(source, /No missed or unanswered questions/);
  assert.match(source, /setReviewMissedOnly\(false\)/);
+});
+
+
+test("school-pass-01 accurately prohibits passing in an active school zone", async () => {
+ const { starterQuestions } = await import("../src/data/questions.ts");
+ const question = starterQuestions.find((q) => q.id === "school-pass-01");
+ assert.ok(question, "school-pass-01 must exist");
+ assert.equal(question.topic, "School and playground zones");
+ assert.equal(question.answerId, "b");
+ assert.match(question.prompt, /school-zone hours/i);
+ assert.match(question.options.find((o) => o.id === "b")?.text ?? "", /outside the active school zone/i);
+ assert.match(question.explanation, /prohibits passing or attempting to pass/i);
+ assert.equal(question.sourceUrl, "https://www.alberta.ca/school-and-playground-zones");
+ assert.equal(question.sourceCheckedAt, "2026-11-12");
 });
