@@ -58,7 +58,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 74; // All additions require current official source evidence.
+const MINIMUM_QUESTION_COUNT = 75; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -782,4 +782,18 @@ test("results review offers accessible missed-only filtering with an empty-succe
  assert.match(source, /reviewMissedOnly && answers\[q\.id\] === q\.answerId/);
  assert.match(source, /No missed or unanswered questions/);
  assert.match(source, /setReviewMissedOnly\(false\)/);
+});
+
+
+test("school bus divided-highway scenario preserves Alberta guide exception", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ const q = starterQuestions.find(item => item.id === "schoolbus-01");
+ assert.ok(q, "School bus question must exist");
+ assert.equal(q.topic, "School bus safety");
+ assert.equal(q.answerId, "b");
+ assert.match(q.options.find(o => o.id === "b")?.text ?? "", /proceed with caution and watch for pedestrians/i);
+ assert.match(q.prompt, /physical median/i);
+ assert.equal(q.sourceUrl, "https://open.alberta.ca/dataset/387f4e8a-6c0a-456a-ab31-995aadaf1f2b/resource/1edf5165-9c51-4da8-8206-7bf08bb9a76d/download/tran-drivers-guide-2023-04.pdf");
+ assert.equal(q.sourceCheckedAt, "2026-11-12");
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
 });
