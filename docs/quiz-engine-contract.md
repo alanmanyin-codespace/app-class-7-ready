@@ -28,7 +28,7 @@ Date: 2026-11-08. Applies to the Next.js starter engine in `src/lib/quiz.ts` and
 - **Mock format:** 30 multiple-choice questions; at least 25 correct passes, per Alberta's knowledge-test overview: https://www.alberta.ca/drivers-knowledge-test (source reviewed 2026-11-08).
 - **Timer:** No countdown timer for MVP. Do not invent an official time limit.
 - **Missing questions:** No partial or 10-question substitute presented as a 30-question mock. UI must disable unavailable modes and explain how many verified questions are required.
-- **Answer submission:** Wrong, missing and unknown option IDs do not receive credit. `answered` only counts a valid option ID. No answer-key leakage before submission in mock UI.
+- **Answer submission:** Wrong, missing and unknown option IDs do not receive credit. `answered` only counts a valid option ID. Answer reveal before submission is the learner's choice (amended 2026-11-12): with **Show answers as I go** on (the default), the learner presses *Check answer* to see correctness, the correct option and the explanation for that question, and the choice is then locked. With it off, the mock UI shows no answer key before submission. Scoring is identical either way.
 - **Retake:** A fresh selection may be sampled; previous saved results must remain intact. This contract tests the pure quiz engine only, not persistence.
 - **Determinism:** Tests inject a fixed RNG. The production app can use Math.random; avoid asserting a particular shuffled order across different RNG implementations.
 - **Source quality:** The 10 available starter questions are not enough for 20 or 30 modes. Do not enable those UI paths until the source-backed question bank reaches the necessary count.
