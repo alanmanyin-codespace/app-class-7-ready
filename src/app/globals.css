@@ -139,3 +139,120 @@
   .info-card { margin: var(--s-8) 0 var(--s-6); }
   .card-actions .btn { flex: 1 1 auto; }
 }
+
+/* ==========================================================================
+   Type layer — role scale on a 16px body.
+   Tailwind preflight zeroes heading weight and paragraph margins; this layer
+   restores hierarchy and paragraph rhythm with named roles.
+   ========================================================================== */
+:root {
+  --text-1: #123448;            /* primary ink */
+  --text-2: #48616f;            /* secondary copy, 6.3:1 on white */
+  --text-3: #5a707c;            /* metadata, 5.0:1 on white */
+  --fs-display: clamp(2.75rem, 5vw, 4.25rem);
+  --fs-title: clamp(2.25rem, 4vw, 3.25rem);
+  --fs-section: clamp(1.75rem, 3vw, 2.25rem);
+  --fs-card: 1.375rem;
+  --fs-sub: 1.125rem;
+  --fs-lead: 1.125rem;
+  --fs-body: 1rem;
+  --fs-small: .9375rem;
+  --fs-meta: .875rem;
+  --fs-label: .75rem;
+}
+
+body { font-size: var(--fs-body); line-height: 1.6; color: var(--text-1); }
+main :is(h1, h2, h3, h4) { font-weight: 800; color: var(--text-1); text-wrap: balance; }
+main :is(h2, h3, h4) { line-height: 1.2; }
+main p { text-wrap: pretty; }
+main p + p { margin-top: .75em; }
+
+/* Labels (caps) */
+.card-overline, .section-kicker, .eyebrow { font-size: var(--fs-label); letter-spacing: .12em; }
+.tag, .source-pill { font-size: var(--fs-label); letter-spacing: .08em; }
+
+/* Header + footer */
+.nav-links { font-size: var(--fs-meta); }
+.header-cta { font-size: var(--fs-meta); }
+.footer-inner p, .footer-note { font-size: var(--fs-meta); color: var(--text-3); line-height: 1.7; }
+
+/* Buttons and links */
+.btn { font-size: var(--fs-small); }
+.btn-text { font-size: var(--fs-small); }
+.inline-link { font-size: var(--fs-small); font-weight: 800; }
+
+/* Home */
+.hero h1 { font-size: var(--fs-display); line-height: 1.04; letter-spacing: -.035em; }
+.hero-desc { font-size: var(--fs-lead); line-height: 1.65; color: var(--text-2); max-width: 34em; }
+.hero-trust { font-size: var(--fs-meta); color: var(--text-3); }
+.hero-floating-badge strong { font-size: var(--fs-meta); }
+.hero-floating-badge small { font-size: var(--fs-label); color: var(--text-3); }
+.section-header h2, .ready-banner h2 { font-size: var(--fs-section); letter-spacing: -.025em; line-height: 1.15; }
+.section-header p { font-size: var(--fs-body); color: var(--text-2); max-width: 60ch; }
+.progress-main h3, .exam-card h3 { font-size: var(--fs-card); letter-spacing: -.015em; margin: 0 0 var(--s-2); }
+.progress-main p { font-size: var(--fs-small); color: var(--text-2); }
+.stat-row span { display: block; margin-top: var(--s-1); font-size: var(--fs-meta); line-height: 1.35; color: var(--text-3); }
+.exam-card h3 { color: #fff; font-weight: 700; margin-top: var(--s-5); }
+.exam-card p { font-size: var(--fs-small); line-height: 1.6; max-width: 26ch; color: #d3e3e7; }
+.exam-footnote { font-size: var(--fs-meta); line-height: 1.55; color: #b7d0d5; }
+.feature-card h3 { font-size: var(--fs-sub); letter-spacing: -.01em; }
+.feature-card p { font-size: var(--fs-small); line-height: 1.6; color: var(--text-2); max-width: 34ch; }
+.ready-banner h2 { color: #fff; }
+.ready-banner p { font-size: var(--fs-body); line-height: 1.65; color: #d0e1e4; max-width: 46ch; }
+
+/* Page titles */
+.subpage-heading h1, .informational-page h1 { font-size: var(--fs-title); line-height: 1.08; letter-spacing: -.03em; }
+.subpage-heading p { font-size: var(--fs-lead); line-height: 1.6; color: var(--text-2); max-width: 60ch; }
+.page-lead { font-size: var(--fs-lead) !important; line-height: 1.6; color: var(--text-2) !important; max-width: 60ch; }
+
+/* Practice: mode picker */
+.mode-title { font-size: var(--fs-card); letter-spacing: -.015em; }
+.mode-intro p { font-size: var(--fs-body); line-height: 1.6; color: var(--text-2); }
+.mode-legend { font-size: var(--fs-meta); }
+.mode-text { font-size: var(--fs-small); line-height: 1.45; color: var(--text-2); }
+.mode-status { font-size: var(--fs-meta); color: var(--text-3); }
+
+/* Practice: active quiz */
+.quiz-count { font-size: var(--fs-meta); }
+.quiz-status { font-size: var(--fs-meta); color: var(--text-3); }
+.topic-tag { font-size: var(--fs-label); letter-spacing: .02em; }
+.quiz-question { font-size: clamp(1.375rem, 2.4vw, 1.75rem); line-height: 1.3; letter-spacing: -.02em; font-weight: 700; }
+.answer-option { font-size: var(--fs-body); line-height: 1.45; }
+.answer-letter { font-size: var(--fs-meta); }
+.quiz-aside h3 { font-size: var(--fs-sub); line-height: 1.3; }
+.quiz-aside p { font-size: var(--fs-small); line-height: 1.6; color: var(--text-2); }
+.quiz-aside .aside-caption { font-size: var(--fs-meta); line-height: 1.6; color: var(--text-3); }
+
+/* Practice: results */
+.result-panel h2 { font-size: var(--fs-section); letter-spacing: -.025em; line-height: 1.15; }
+.result-heading p { font-size: var(--fs-body); color: var(--text-2); }
+.result-large { letter-spacing: -.04em; }
+.result-message { font-size: var(--fs-body); line-height: 1.6; color: var(--text-2); }
+.review-toolbar h3 { font-size: var(--fs-card); }
+.review-toolbar p { font-size: var(--fs-meta); color: var(--text-3); }
+.review-header { font-size: var(--fs-label); letter-spacing: .1em; }
+.review-item h4 { font-size: var(--fs-sub); line-height: 1.35; margin: var(--s-3) 0 var(--s-2); }
+.review-item p { font-size: var(--fs-small); line-height: 1.6; color: var(--text-2); max-width: 70ch; margin: 0; }
+.review-item p + p { margin-top: var(--s-2); }
+.review-item .aside-caption { font-size: var(--fs-meta); color: var(--text-3); }
+.review-item a { display: inline-block; margin-top: var(--s-3); font-size: var(--fs-meta); }
+
+/* Informational pages */
+.info-card h2 { font-size: var(--fs-card); letter-spacing: -.015em; }
+.info-card p { font-size: var(--fs-body); line-height: 1.7; color: var(--text-2); }
+
+@media (max-width: 620px) {
+  .hero h1 { font-size: 2.625rem; letter-spacing: -.03em; }
+  .hero-desc { font-size: var(--fs-body); }
+  .section-header h2, .ready-banner h2, .result-panel h2 { font-size: 1.75rem; }
+  .subpage-heading h1, .informational-page h1 { font-size: 2.125rem; letter-spacing: -.025em; }
+  .subpage-heading p { font-size: var(--fs-body); }
+  .page-lead { font-size: var(--fs-body) !important; }
+  .mode-title { font-size: 1.25rem; }
+  .quiz-question { font-size: 1.375rem; }
+  .answer-option { font-size: var(--fs-body); }
+  .stat-row span { font-size: .8125rem; }
+  .btn, .quiz-controls .btn { font-size: var(--fs-small); }
+  .nav-links { font-size: .8125rem; }
+  .header-cta { font-size: .8125rem; }
+}
