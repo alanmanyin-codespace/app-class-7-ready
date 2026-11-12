@@ -772,3 +772,14 @@ test("failed mock result gives threshold-specific recovery guidance", async () =
  assert.match(source, /mode === 30 && !passedOfficialStyleMock\(score\) \? "You have not reached the mock exam pass threshold yet\./);
  assert.match(source, /Review missed and unanswered questions below, then try another mock\./);
 });
+
+
+test("results review offers accessible missed-only filtering with an empty-success state", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /aria-pressed=\{reviewMissedOnly\}/);
+ assert.match(source, /Show missed and unanswered only/);
+ assert.match(source, /reviewMissedOnly && answers\[q\.id\] === q\.answerId/);
+ assert.match(source, /No missed or unanswered questions/);
+ assert.match(source, /setReviewMissedOnly\(false\)/);
+});
