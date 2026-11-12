@@ -22,7 +22,7 @@ export function PracticeQuiz({ questions }: Props) {
   const bankReady = bankErrors.length === 0;
   function startQuiz(count: QuizMode) {
     if (!bankReady || questions.length < count) { setStartError("This practice mode is unavailable because the validated question bank is insufficient."); return; }
-    try { setSelected(sampleQuestions(questions, count)); setMode(count); setIndex(0); setAnswers({}); setChecked({}); setFlagged({}); setReviewing(false); setResumed(false); setFinished(false); setStored(true); setReviewMissedOnly(false); setStartError(""); }
+    try { setSelected(sampleQuestions(questions, count)); setMode(count); setInstantFeedback(count === 30 ? false : instantFeedback); setIndex(0); setAnswers({}); setChecked({}); setFlagged({}); setReviewing(false); setResumed(false); setFinished(false); setStored(true); setReviewMissedOnly(false); setStartError(""); }
     catch { setStartError("Unable to start practice with this question bank."); }
   }
   const [index, setIndex] = useState(0);
@@ -50,7 +50,7 @@ export function PracticeQuiz({ questions }: Props) {
     const restore = window.setTimeout(() => {
       const session = loadSession(questions);
       if (!session) return;
-      setMode(session.mode); setInstantFeedback(session.instantFeedback); setSelected(session.questions);
+      setMode(session.mode); setInstantFeedback(session.mode === 30 ? false : session.instantFeedback); setSelected(session.questions);
       setIndex(session.index); setAnswers(session.answers); setChecked(session.checked); setFlagged(session.flagged); setResumed(true);
     }, 0);
     return () => window.clearTimeout(restore);
@@ -88,8 +88,8 @@ export function PracticeQuiz({ questions }: Props) {
   const current = selected[index];
   const score = isFinished ? scoreQuiz(selected, answers) : null;
   const isAnswered = (q: Question) => q.options.some((option) => option.id === answers[q.id]);
-  const locked = !!current && instantFeedback && !!checked[current.id];
-  const needsCheck = !!current && instantFeedback && !!answers[current.id] && !checked[current.id];
+  const locked = !!current && mode !== 30 && instantFeedback && !!checked[current.id];
+  const needsCheck = !!current && mode !== 30 && instantFeedback && !!answers[current.id] && !checked[current.id];
 
   function goTo(target: number) { setResumed(false); setIndex(target); }
   function checkAnswer() { if (!current || !answers[current.id]) return; focusFeedback.current = true; setResumed(false); setChecked((prev) => ({ ...prev, [current.id]: true })); }
@@ -118,7 +118,7 @@ export function PracticeQuiz({ questions }: Props) {
   function chooseAnotherMode() { focusModeOnReturn.current = true; setSelected([]); setIndex(0); setAnswers({}); setChecked({}); setFlagged({}); setReviewing(false); setResumed(false); setFinished(false); setReviewMissedOnly(false); setStartError(""); clearSession(); }
 
   function questionStatus(q: Question) {
-    if (instantFeedback && checked[q.id]) return answers[q.id] === q.answerId ? "correct" : "incorrect";
+    if (mode !== 30 && instantFeedback && checked[q.id]) return answers[q.id] === q.answerId ? "correct" : "incorrect";
     return isAnswered(q) ? "answered" : "unanswered";
   }
   function renderMap() {
@@ -134,7 +134,7 @@ export function PracticeQuiz({ questions }: Props) {
 
   if (selected.length === 0) {
     return <section className="quiz-panel mode-picker" aria-labelledby="practice-mode-title"><div className="mode-intro"><h2 className="mode-title" id="practice-mode-title" ref={modeHeadingRef} tabIndex={-1}>Choose practice or a mock exam</h2><p>Practice with 10 or 20 questions, or take a 30-question mock exam. The mock requires 25 correct answers to pass. Each session draws unique questions.</p></div><fieldset className="answers-list mode-options"><legend className="mode-legend">Session mode</legend>{([10,20,30] as const).map(count => <label className={`answer-option mode-option ${mode === count ? "selected" : ""}`} key={count}><input type="radio" name="practice-length" value={count} checked={mode === count} disabled={!bankReady || questions.length < count} onChange={() => setMode(count)}/><span className="mode-count" aria-hidden="true">{count}</span><span className="mode-text">{count === 30 ? "30-question mock exam (25 correct to pass)" : `${count} questions`}</span>{(!bankReady || questions.length < count) && <span className="mode-text"> (unavailable)</span>}</label>)}</fieldset>
-      <label className="feedback-toggle"><input type="checkbox" role="switch" checked={instantFeedback} onChange={(event) => setInstantFeedback(event.target.checked)}/><span className="toggle-track" aria-hidden="true"><span className="toggle-thumb"/></span><span className="toggle-copy"><strong>Show answers as I go</strong><span>Check each answer to see if you were right, with the explanation. Turn this off for a realistic exam where answers appear only after you submit.</span></span></label>
+      <label className="feedback-toggle"><input type="checkbox" role="switch" checked={mode === 30 ? false : instantFeedback} disabled={mode === 30} onChange={(event) => setInstantFeedback(event.target.checked)}/><span className="toggle-track" aria-hidden="true"><span className="toggle-thumb"/></span><span className="toggle-copy"><strong>Show answers as I go</strong><span>{mode === 30 ? "Mock exams always hide answers until submission." : "Check each answer to see if you were right, with the explanation. Turn this off for a realistic exam where answers appear only after you submit."}</span></span></label>
       <div className="mode-footer"><p className="mode-status" role="status">{bankReady ? `${questions.length} validated questions available.` : "Question bank validation failed; practice is unavailable."}</p>{startError && <p role="alert" className="warning-note">{startError}</p>}<button className="btn btn-primary" type="button" disabled={!bankReady || questions.length < mode} onClick={() => startQuiz(mode)}>Start {mode === 30 ? "30-question mock exam" : `${mode}-question practice`} →</button></div></section>;
   }
   if (isFinished && score) {
