@@ -11,6 +11,7 @@ test("practice feedback defaults on, while mock mode disables the switch", () =>
 });
 
 test("exam mode: checking an answer reveals feedback and locks the choice", () => {
+  assert.match(source, /function checkAnswer\(\) \{ if \(mode === 30 \|\| !current \|\| !answers\[current\.id\]\) return;/);
   assert.match(source, /const needsCheck = !!current && mode !== 30 && instantFeedback && !!answers\[current\.id\] && !checked\[current\.id\]/);
   assert.match(source, /const locked = !!current && mode !== 30 && instantFeedback && !!checked\[current\.id\]/);
   assert.match(source, /onClick=\{checkAnswer\}>Check answer<\/button>/);
