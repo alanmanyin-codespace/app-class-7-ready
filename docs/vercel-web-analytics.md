@@ -1,8 +1,8 @@
-# Vercel Web Analytics — RoadReady 7
+# Vercel Web Analytics — Class 7 Ready
 
 ## Scope
 
-RoadReady 7 uses the `@vercel/analytics` Next.js integration in `src/app/layout.tsx` to capture **anonymous, aggregate page views** for App Router routes on Vercel. The package version is pinned in `package.json` and `package-lock.json`. The site has no account, and quiz progress remains in browser-only storage. **Do not add personally identifying data, raw answer responses, email addresses, identifiers or localStorage values to analytics.**
+Class 7 Ready uses the `@vercel/analytics` Next.js integration in `src/app/layout.tsx` to capture **anonymous, aggregate page views** for App Router routes on Vercel. The package version is pinned in `package.json` and `package-lock.json`. The site has no account, and quiz progress remains in browser-only storage. **Do not add personally identifying data, raw answer responses, email addresses, identifiers or localStorage values to analytics.**
 
 Vercel Web Analytics is *not* individual user/session tracing or screen replay; it does not track a person's complete sequence of interactions. On the connected Hobby team, custom events are not available, so do not implement calls to `track()` or claim quiz-answer tracking.
 

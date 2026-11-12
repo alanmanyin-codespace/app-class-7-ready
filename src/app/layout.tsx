@@ -10,15 +10,15 @@ import "./globals.css";
 const overpass = Overpass({ subsets: ["latin"], display: "swap", variable: "--font-overpass" });
 
 export const metadata: Metadata = {
-  title: { default: "RoadReady 7 | Alberta Class 7 Practice", template: "%s | RoadReady 7" },
+  title: { default: "Class 7 Ready | Alberta Learner's Test Practice", template: "%s | Class 7 Ready" },
   description: "An independent Alberta Class 7 learner study companion. Practice original questions and track your progress.",
-  applicationName: "RoadReady 7",
+  applicationName: "Class 7 Ready",
   manifest: "/manifest.webmanifest",
 };
 export const viewport: Viewport = { themeColor: "#143d52", width: "device-width", initialScale: 1 };
 
 function Brand() {
-  return <Link href="/" className="brand" aria-label="RoadReady 7 home"><span className="brand-mark" aria-hidden="true"><span /></span><span>ROAD<span className="brand-accent">READY</span><span className="brand-seven">7</span></span></Link>;
+  return <Link href="/" className="brand" aria-label="Class 7 Ready home"><span className="brand-mark" aria-hidden="true"><span /></span><span>CLASS<span className="brand-seven">7</span><span className="brand-accent">READY</span></span></Link>;
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

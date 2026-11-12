@@ -441,3 +441,4 @@ main p + p { margin-top: .75em; }
   .hh-letter, .hh-check { width: 24px; height: 24px; border-radius: 6px; }
 }
 .hh-chip-sep { margin-inline: .4em; color: var(--text-3); }
+.brand-seven { margin-inline: 4px; }

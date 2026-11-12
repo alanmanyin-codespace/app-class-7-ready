@@ -1,4 +1,4 @@
-# RoadReady 7 question data contract (v1)
+# Class 7 Ready question data contract (v1)
 
 The app uses `VersionedQuestionBank` from `src/lib/quiz.ts`. Each question must have a stable unique `id`, nonblank `prompt`, at least two nonblank choices with unique choice IDs, `answerId` matching one choice, nonblank `explanation`, supported `topic`, HTTPS `sourceUrl`, and a real ISO calendar date `sourceCheckedAt` (YYYY-MM-DD). `imageAlt` is optional, but when supplied must be nonblank. The current topics are Test basics, Eligibility, and Learner restrictions; expand the typed topic registry deliberately when adding topics. The validator checks structure and traceability, **not** factual correctness or source reliability. Editors must independently verify each claim against current authoritative guidance.
 

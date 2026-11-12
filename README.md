@@ -1,6 +1,6 @@
-# RoadReady 7 — Next.js starter
+# Class 7 Ready — Next.js starter
 
-RoadReady 7 is an **unofficial**, independent Alberta Class 7 learner knowledge-test practice app. This repository bootstrap uses **Next.js App Router + React + TypeScript + Tailwind CSS** with a statically exported site.
+Class 7 Ready is an **unofficial**, independent Alberta Class 7 learner knowledge-test practice app. This repository bootstrap uses **Next.js App Router + React + TypeScript + Tailwind CSS** with a statically exported site.
 
 ## Current scope
 - Responsive landing/dashboard and original **10-question starter quiz** with answer explanations and direct source links.
