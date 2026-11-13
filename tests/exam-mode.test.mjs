@@ -43,3 +43,12 @@ test("exam mode: sessions are saved while in progress and cleared on submit or e
   assert.match(source, /const saved = saveCompletedAttempt\(result\);\s*clearSession\(\);/);
   assert.match(source, /function chooseAnotherMode\(\) \{.*clearSession\(\); \}$/m);
 });
+
+test("practice mode allows skipping unanswered questions without revealing answers", () => {
+  // An unanswered question can be revisited via the question map or review flow.
+  assert.match(source, /!needsCheck && index < selected\.length - 1 && <button/);
+  assert.match(source, /onClick=\{\(\)=>setIndex\(\(i\)=>i\+1\)\}>Next question/);
+  assert.doesNotMatch(source, /disabled=\{mode !== 30 && !answers\[current\.id\]\}>Next question/);
+  // Checking a selected answer remains explicit when instant feedback is enabled.
+  assert.match(source, /\{needsCheck && <button[^>]*onClick=\{checkAnswer\}>Check answer/);
+});
