@@ -55,7 +55,9 @@ test("practice mode allows skipping unanswered questions without revealing answe
 
 
 test("practice review is accessible before completion while finish stays guarded", () => {
-  assert.match(source, /!needsCheck && <button className="btn btn-outline" type="button" onClick=\{\(\) => setReviewing\(true\)\}/);
+  assert.match(source, /<button className="btn btn-outline" type="button" onClick=\{\(\) => setReviewing\(true\)\}/);
+  assert.doesNotMatch(source, /!needsCheck && <button className="btn btn-outline" type="button" onClick=\{\(\) => setReviewing\(true\)\}/);
+  // A selected but unchecked practice answer must not block review navigation.
   assert.match(source, /mode !== 30 && answeredCount === selected.length && <button/);
   assert.match(source, /if \(mode !== 30 && answeredCount < selected.length\) return;/);
   assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected.length\}/);
