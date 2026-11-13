@@ -783,3 +783,19 @@ test("results review offers accessible missed-only filtering with an empty-succe
  assert.match(source, /No missed or unanswered questions/);
  assert.match(source, /setReviewMissedOnly\(false\)/);
 });
+
+
+test("construction speeding-fine warning sign scenario retains official Alberta evidence", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ assert.ok(starterQuestions.length >= 75);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
+ const q = starterQuestions.find(item => item.id === "roadside-07");
+ assert.ok(q, "Missing roadside-07");
+ assert.equal(q.topic, "Roadside worker safety");
+ assert.equal(q.answerId, "a");
+ assert.match(q.options.find(option => option.id === q.answerId)?.text ?? "", /fines can still be doubled when workers are present/i);
+ assert.match(q.prompt, /no sign warning about doubled speeding fines/i);
+ assert.equal(q.sourceUrl, "https://www.alberta.ca/roadside-worker-safety");
+ assert.equal(q.sourceCheckedAt, "2026-11-13");
+});
