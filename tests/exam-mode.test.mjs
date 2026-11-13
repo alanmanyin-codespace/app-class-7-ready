@@ -63,3 +63,12 @@ test("practice review is accessible before completion while finish stays guarded
   assert.match(source, /if \(mode !== 30 && answeredCount < selected.length\) return;/);
   assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected.length\}/);
 });
+
+
+test("completed practice can finish without checking its final selected answer", () => {
+  // Practice submission requires every answer, but Check answer is optional.
+  assert.match(source, /\{mode !== 30 && answeredCount === selected\.length && <button className="btn btn-primary" type="button" onClick=\{\(\) => finishQuiz\(\)\}>Finish quiz/);
+  assert.doesNotMatch(source, /!needsCheck && mode !== 30 && answeredCount === selected\.length/);
+  assert.match(source, /if \(mode !== 30 && answeredCount < selected\.length\) return;/);
+  assert.match(source, /const locked = !!current && mode !== 30 && instantFeedback && !!checked\[current\.id\]/);
+});
