@@ -33,7 +33,7 @@ test("exam mode: question map jumps, marks the current question and flags", () =
 
 test("exam mode: mock submits through an in-page review that skips the browser confirm", () => {
   assert.match(source, /mode === 30 \? \(\) => setReviewing\(true\) : \(\) => finishQuiz\(\)/);
-  assert.match(source, /onClick=\{\(\) => finishQuiz\(true\)\}>Submit mock exam/);
+  assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected\.length\} onClick=\{\(\) => finishQuiz\(true\)\}>\{mode === 30 \? "Submit mock exam ↗" : "Finish practice ↗"\}/);
   assert.match(source, /if \(!confirmed && mode === 30 && answeredCount < selected\.length && !window\.confirm/);
   assert.match(source, /Review before you submit/);
 });

@@ -795,3 +795,13 @@ test("30-question mock never reveals answers before submission, including restor
  assert.match(source, /const needsCheck = !!current && mode !== 30 && instantFeedback/);
  assert.match(source, /Mock exams always hide answers until submission/);
 });
+
+
+test("review submission requires complete practice answers but permits mock submission", async () => {
+ const { readFile } = await import("node:fs/promises");
+ const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
+ assert.match(source, /if \(mode !== 30 && answeredCount < selected\.length\) return;/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected\.length\} onClick=\{\(\) => finishQuiz\(true\)\}/);
+ assert.match(source, /mode === 30 \? "Submit mock exam ↗" : "Finish practice ↗"/);
+ assert.match(source, /mode === 30 && answeredCount < selected\.length && !window\.confirm/);
+});
