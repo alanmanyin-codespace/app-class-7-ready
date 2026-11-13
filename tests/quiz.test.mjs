@@ -58,7 +58,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 74; // All additions require current official source evidence.
+const MINIMUM_QUESTION_COUNT = 76; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -782,4 +782,25 @@ test("results review offers accessible missed-only filtering with an empty-succe
  assert.match(source, /reviewMissedOnly && answers\[q\.id\] === q\.answerId/);
  assert.match(source, /No missed or unanswered questions/);
  assert.match(source, /setReviewMissedOnly\(false\)/);
+});
+
+test("railway crossing questions preserve Alberta Driver's Guide facts and answer keys", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ const railway = starterQuestions.filter(q => q.id.startsWith("railway-"));
+ assert.deepEqual(railway.map(q => q.id), ["railway-01", "railway-02"]);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
+ const expected = new Map([
+  ["railway-01", ["a", /between 5 and 15 metres/i, /five and fifteen metres/i]],
+  ["railway-02", ["b", /another train is not approaching/i, /second train/i]],
+ ]);
+ for (const q of railway) {
+  const [answerId, answerMeaning, explanationMeaning] = expected.get(q.id);
+  assert.equal(q.topic, "Railway crossings");
+  assert.equal(q.answerId, answerId);
+  assert.match(q.options.find(o => o.id === q.answerId)?.text ?? "", answerMeaning);
+  assert.match(q.explanation, explanationMeaning);
+  assert.equal(q.sourceUrl, "https://open.alberta.ca/dataset/387f4e8a-6c0a-456a-ab31-995aadaf1f2b/resource/1edf5165-9c51-4da8-8206-7bf08bb9a76d/download/tran-drivers-guide-2023-04.pdf");
+  assert.equal(q.sourceCheckedAt, "2026-11-12");
+ }
 });
