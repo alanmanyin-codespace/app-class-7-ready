@@ -102,6 +102,7 @@ export function PracticeQuiz({ questions }: Props) {
     else questionHeadingRef.current?.focus(); // Only the current question is unanswered; keep keyboard focus useful.
   }
   function finishQuiz(confirmed = false) {
+    if (mode !== 30 && answeredCount < selected.length) return;
     if (!confirmed && mode === 30 && answeredCount < selected.length && !window.confirm(`Submit with ${selected.length - answeredCount} unanswered question(s)? Unanswered questions count as incorrect.`)) return;
     const result = scoreQuiz(selected, answers);
     const saved = saveCompletedAttempt(result);
@@ -154,7 +155,7 @@ export function PracticeQuiz({ questions }: Props) {
       {unansweredIdx.length > 0 && <div className="review-group"><h3>Unanswered</h3><p className="warning-note">Unanswered questions count as incorrect.</p>{jumpList(unansweredIdx, "Jump to an unanswered question")}</div>}
       {flaggedIdx.length > 0 && <div className="review-group"><h3>Flagged for review</h3>{jumpList(flaggedIdx, "Jump to a flagged question")}</div>}
       {unansweredIdx.length === 0 && flaggedIdx.length === 0 && <p className="review-ready">Every question is answered and nothing is flagged. You are ready to submit.</p>}
-      <div className="review-actions"><button className="btn btn-outline" type="button" onClick={() => setReviewing(false)}>← Back to questions</button><button className="btn btn-primary" type="button" onClick={() => finishQuiz(true)}>Submit mock exam ↗</button></div>
+      <div className="review-actions"><button className="btn btn-outline" type="button" onClick={() => setReviewing(false)}>← Back to questions</button><button className="btn btn-primary" type="button" disabled={mode !== 30 && answeredCount < selected.length} onClick={() => finishQuiz(true)}>{mode === 30 ? "Submit mock exam ↗" : "Finish practice ↗"}</button></div>
     </section>;
   }
   const chosen = current.options.find((o) => o.id === answers[current.id]);
