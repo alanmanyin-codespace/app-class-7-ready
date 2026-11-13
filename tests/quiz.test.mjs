@@ -223,7 +223,7 @@ test("mock exam UI offers a real 30-question option, explicit submission and pas
  assert.match(source,/sampleQuestions\(questions, count\)/);
  assert.match(source,/Submit mock exam/);
  assert.match(source,/passedOfficialStyleMock\(score\)/);
- assert.match(source,/mode !== 30 && !answers\[current.id\]/);
+ assert.match(source,/index < selected\.length - 1 && <button[^>]*onClick=\{\(\)=>setIndex\(\(i\)=>i\+1\)\}/);
 });
 
 
@@ -568,7 +568,7 @@ test("completed practice can finish from any question, while incomplete practice
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /index===selected\.length-1 \|\| answeredCount===selected\.length/);
  assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
- assert.match(source, /mode !== 30 && !answers\[current\.id\]/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
 });
 
 test("winter preparedness additions preserve independently verified answer meanings", async () => {
@@ -632,7 +632,7 @@ test("completed practice retains Next navigation alongside Finish before the las
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /index < selected\.length - 1 && <button[^>]*onClick=\{\(\)=>setIndex\(\(i\)=>i\+1\)\}/);
  assert.match(source, /index===selected\.length-1 \|\| answeredCount===selected\.length/);
- assert.match(source, /disabled=\{mode !== 30 && !answers\[current\.id\]\}/);
+ assert.doesNotMatch(source, /disabled=\{mode !== 30 && !answers\[current\.id\]\}/);
 });
 
 
