@@ -783,3 +783,19 @@ test("results review offers accessible missed-only filtering with an empty-succe
  assert.match(source, /No missed or unanswered questions/);
  assert.match(source, /setReviewMissedOnly\(false\)/);
 });
+
+
+test("schoolpass-02 preserves verified school-zone no-passing rule", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ const q = starterQuestions.find(item => item.id === "schoolpass-02");
+ assert.ok(q, "School-zone passing scenario must exist");
+ assert.equal(q.topic, "School and playground zones");
+ assert.equal(q.sourceUrl, "https://www.alberta.ca/school-and-playground-zones");
+ assert.equal(q.sourceCheckedAt, "2026-11-13");
+ assert.equal(q.answerId, "b");
+ assert.match(q.options.find(option => option.id === q.answerId)?.text ?? "", /passing or attempting to pass/i);
+ assert.match(q.explanation, /school zone is in effect/i);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.ok(starterQuestions.length >= 75);
+ assert.equal(new Set(starterQuestions.map(item => item.id)).size, starterQuestions.length);
+});
