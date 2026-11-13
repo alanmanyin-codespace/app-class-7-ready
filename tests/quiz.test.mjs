@@ -359,7 +359,7 @@ test("mock exam offers accessible review of unanswered questions before submissi
  assert.match(source, /Array\.from\(\{ length: selected\.length - 1 \}/);
  assert.match(source, /\(index \+ offset \+ 1\) % selected\.length/);
  assert.match(source, /if \(nextUnanswered !== undefined\) setIndex\(nextUnanswered\)/);
- assert.match(source, /answeredCount < selected\.length && <button/);
+ assert.match(source, /mode !== 30 && answeredCount === selected.length && <button/);
  assert.match(source, /onClick=\{reviewUnanswered\}>Review unanswered/);
 });
 
@@ -482,8 +482,8 @@ test("six roadside worker safety questions have verified Alberta provenance and 
 test("all practice modes can jump to unanswered questions and require valid answers before finishing", async () => {
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
- assert.match(source, /answeredCount < selected\.length && <button/);
- assert.match(source, /mode !== 30 && answeredCount !== selected\.length/);
+ assert.match(source, /mode !== 30 && answeredCount === selected.length && <button/);
+ assert.match(source, /mode !== 30 && answeredCount < selected\.length/);
  assert.match(source, /function reviewUnanswered\(\)/);
 });
 
@@ -566,9 +566,9 @@ test("submitting a quiz focuses the results heading for keyboard and screen-read
 test("completed practice can finish from any question, while incomplete practice remains gated", async () => {
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
- assert.match(source, /index===selected\.length-1 \|\| answeredCount===selected\.length/);
- assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
- assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
+ assert.match(source, /mode !== 30 && answeredCount === selected.length && <button/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected\.length\}/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected\.length\}/);
 });
 
 test("winter preparedness additions preserve independently verified answer meanings", async () => {
@@ -631,7 +631,7 @@ test("completed practice retains Next navigation alongside Finish before the las
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /index < selected\.length - 1 && <button[^>]*onClick=\{\(\)=>setIndex\(\(i\)=>i\+1\)\}/);
- assert.match(source, /index===selected\.length-1 \|\| answeredCount===selected\.length/);
+ assert.match(source, /mode !== 30 && answeredCount === selected.length && <button/);
  assert.doesNotMatch(source, /disabled=\{mode !== 30 && !answers\[current\.id\]\}/);
 });
 
@@ -639,10 +639,10 @@ test("completed practice retains Next navigation alongside Finish before the las
 test("mock submission is available from any question and warns before submitting blanks", async () => {
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
- assert.match(source, /mode === 30 \|\| index===selected\.length-1 \|\| answeredCount===selected\.length/);
+ assert.match(source, /mode === 30 \? "Review and submit" : "Review questions"/);
  assert.match(source, /mode === 30 && answeredCount < selected\.length && !window\.confirm/);
  assert.match(source, /Unanswered questions count as incorrect/);
- assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected\.length\}/);
 });
 
 
@@ -751,7 +751,7 @@ test("practice and mock learners can clear a selected answer while practice comp
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
  assert.match(source, /\{answers\[current\.id\] && <button/);
- assert.match(source, /disabled=\{mode !== 30 && answeredCount !== selected\.length\}/);
+ assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected\.length\}/);
  assert.match(source, /Clear answer \(leave unanswered\)/);
  assert.match(source, /delete next\[current\.id\]/);
  assert.match(source, /setAnswers\(prev => \{ const next = \{ \.\.\.prev \}; delete next\[current\.id\]; return next; \}\)/);

@@ -32,7 +32,7 @@ test("exam mode: question map jumps, marks the current question and flags", () =
 });
 
 test("exam mode: mock submits through an in-page review that skips the browser confirm", () => {
-  assert.match(source, /mode === 30 \? \(\) => setReviewing\(true\) : \(\) => finishQuiz\(\)/);
+  assert.match(source, /onClick=\{\(\) => setReviewing\(true\)\}>\{mode === 30 \? "Review and submit" : "Review questions"\}/);
   assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected\.length\} onClick=\{\(\) => finishQuiz\(true\)\}>\{mode === 30 \? "Submit mock exam ↗" : "Finish practice ↗"\}/);
   assert.match(source, /if \(!confirmed && mode === 30 && answeredCount < selected\.length && !window\.confirm/);
   assert.match(source, /Review before you submit/);
@@ -51,4 +51,12 @@ test("practice mode allows skipping unanswered questions without revealing answe
   assert.doesNotMatch(source, /disabled=\{mode !== 30 && !answers\[current\.id\]\}>Next question/);
   // Checking a selected answer remains explicit when instant feedback is enabled.
   assert.match(source, /\{needsCheck && <button[^>]*onClick=\{checkAnswer\}>Check answer/);
+});
+
+
+test("practice review is accessible before completion while finish stays guarded", () => {
+  assert.match(source, /!needsCheck && <button className="btn btn-outline" type="button" onClick=\{\(\) => setReviewing\(true\)\}/);
+  assert.match(source, /mode !== 30 && answeredCount === selected.length && <button/);
+  assert.match(source, /if \(mode !== 30 && answeredCount < selected.length\) return;/);
+  assert.match(source, /disabled=\{mode !== 30 && answeredCount < selected.length\}/);
 });
