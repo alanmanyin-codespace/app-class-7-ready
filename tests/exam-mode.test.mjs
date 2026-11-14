@@ -72,3 +72,15 @@ test("completed practice can finish without checking its final selected answer",
   assert.match(source, /if \(mode !== 30 && answeredCount < selected\.length\) return;/);
   assert.match(source, /const locked = !!current && mode !== 30 && instantFeedback && !!checked\[current\.id\]/);
 });
+
+test("mock sessions preserve the learner's practice feedback preference without leaking mock answers", () => {
+  // Switching to a mock must not permanently turn off practice feedback.
+  assert.doesNotMatch(source, /setInstantFeedback\(count === 30 \? false : instantFeedback\)/);
+  assert.match(source, /setInstantFeedback\(session\.instantFeedback\)/);
+  assert.match(source, /checked=\{mode === 30 \? false : instantFeedback\} disabled=\{mode === 30\}/);
+  // A mock must never display practice-only feedback wording or map legend.
+  assert.match(source, /\{mode !== 30 && instantFeedback \? <><li><span className="key-swatch is-correct"/);
+  assert.match(source, /\{mode !== 30 && instantFeedback \? "You can still answer any question you have not checked yet\."/);
+  assert.match(source, /\{mode !== 30 && instantFeedback \? "Answers are shown as you go\./);
+  assert.match(source, /const locked = !!current && mode !== 30 && instantFeedback/);
+});
