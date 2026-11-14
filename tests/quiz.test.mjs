@@ -788,8 +788,9 @@ test("results review offers accessible missed-only filtering with an empty-succe
 test("30-question mock never reveals answers before submission, including restored sessions", async () => {
  const { readFile } = await import("node:fs/promises");
  const source = await readFile(new URL("../src/components/practice-quiz.tsx", import.meta.url), "utf8");
- assert.match(source, /setInstantFeedback\(count === 30 \? false : instantFeedback\)/);
- assert.match(source, /setInstantFeedback\(session\.mode === 30 \? false : session\.instantFeedback\)/);
+ assert.doesNotMatch(source, /setInstantFeedback\(count === 30 \? false : instantFeedback\)/);
+ assert.match(source, /setInstantFeedback\(session\.instantFeedback\)/);
+ assert.match(source, /mode !== 30 && instantFeedback \? "Answers are shown as you go/);
  assert.match(source, /checked=\{mode === 30 \? false : instantFeedback\} disabled=\{mode === 30\}/);
  assert.match(source, /const locked = !!current && mode !== 30 && instantFeedback/);
  assert.match(source, /const needsCheck = !!current && mode !== 30 && instantFeedback/);
