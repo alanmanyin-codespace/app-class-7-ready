@@ -58,7 +58,7 @@ test("official-style 30 question threshold: 24 fails, 25 passes", () => {
  assert.equal(passedOfficialStyleMock(scoreQuiz(bank.slice(0,10),makeAnswers(10))),false);
 });
 
-const MINIMUM_QUESTION_COUNT = 74; // All additions require current official source evidence.
+const MINIMUM_QUESTION_COUNT = 75; // All additions require current official source evidence.
 
 test("expanded bank meets minimum count and validates every question dynamically", async () => {
  const { starterQuestions } = await import("../src/data/questions.ts");
@@ -322,7 +322,7 @@ test("winter driving answer keys match the source-backed safe actions", async ()
 
 test("eight distracted-driving questions have source provenance and semantically correct answer keys", async () => {
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
- const questions = starterQuestions.filter(q => q.id.startsWith("distraction-"));
+ const questions = starterQuestions.filter(q => /^distraction-0[1-8]$/.test(q.id));
  assert.equal(questions.length, 8);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  const expected = [
@@ -708,7 +708,7 @@ test("30-question mock scoring reconciles correct, wrong and unanswered answers"
 
 test("winter bridge icing and downhill gearing questions retain Alberta provenance", async () => {
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
- assert.ok(starterQuestions.length >= 74);
+ assert.ok(starterQuestions.length >= 75);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
  const expected = new Map([
@@ -782,4 +782,18 @@ test("results review offers accessible missed-only filtering with an empty-succe
  assert.match(source, /reviewMissedOnly && answers\[q\.id\] === q\.answerId/);
  assert.match(source, /No missed or unanswered questions/);
  assert.match(source, /setReviewMissedOnly\(false\)/);
+});
+
+test("distracted driving and a moving violation can lead to separate tickets", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ const q = starterQuestions.find(item => item.id === "distraction-09");
+ assert.ok(q);
+ assert.equal(q.topic, "Distracted driving");
+ assert.equal(q.answerId, "c");
+ assert.match(q.options.find(option => option.id === q.answerId)?.text ?? "", /both distracted driving and the moving violation/i);
+ assert.match(q.explanation, /two tickets/i);
+ assert.equal(q.sourceUrl, "https://www.alberta.ca/distracted-driving");
+ assert.equal(q.sourceCheckedAt, "2026-11-13");
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.equal(new Set(starterQuestions.map(item => item.id)).size, starterQuestions.length);
 });
