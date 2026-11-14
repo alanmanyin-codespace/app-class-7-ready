@@ -322,7 +322,7 @@ test("winter driving answer keys match the source-backed safe actions", async ()
 
 test("eight distracted-driving questions have source provenance and semantically correct answer keys", async () => {
  const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
- const questions = starterQuestions.filter(q => q.id.startsWith("distraction-"));
+ const questions = starterQuestions.filter(q => /^distraction-0[1-8]$/.test(q.id));
  assert.equal(questions.length, 8);
  assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
  const expected = [
