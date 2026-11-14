@@ -783,3 +783,24 @@ test("results review offers accessible missed-only filtering with an empty-succe
  assert.match(source, /No missed or unanswered questions/);
  assert.match(source, /setReviewMissedOnly\(false\)/);
 });
+
+
+test("occupant-restraint scenarios preserve official Alberta source, answers and bank validity", async () => {
+ const { starterQuestions, questionBank } = await import("../src/data/questions.ts");
+ assert.ok(starterQuestions.length >= 76);
+ assert.deepEqual(validateVersionedQuestionBank(questionBank), []);
+ assert.equal(new Set(starterQuestions.map(q => q.id)).size, starterQuestions.length);
+ const expected = new Map([
+  ["restraint-01", ["b", /driver/i]],
+  ["restraint-02", ["a", /appropriately installed child restraint/i]],
+ ]);
+ for (const [id, [answerId, meaning]] of expected) {
+  const q = starterQuestions.find(item => item.id === id);
+  assert.ok(q, `Missing ${id}`);
+  assert.equal(q.topic, "Occupant restraints");
+  assert.equal(q.answerId, answerId);
+  assert.match(q.options.find(o => o.id === answerId)?.text ?? "", meaning);
+  assert.equal(q.sourceUrl, "https://www.alberta.ca/occupant-restraint-laws");
+  assert.equal(q.sourceCheckedAt, "2026-11-13");
+ }
+});
